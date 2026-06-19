@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkFlow — The Privacy-First Project Manager for iPhone, iPad & Mac</title>
+<meta name="description" content="Kanban boards, Pomodoro focus timer, calendar sync, team sharing, and one-tap project templates — now on Mac too. No subscriptions, no tracking. Your data stays in your iCloud.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="icon" type="image/png" href="https://static.wixstatic.com/media/7b117f_8d663b332aef45dbbe316f16a7bca8a7~mv2.png">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --blue:#4F46E5;--purple:#7C3AED;--indigo:#4338CA;--light:#F5F3FF;--dark:#1E1B4B;
+    --gray:#6B7280;--white:#FFFFFF;--green:#10B981;--orange:#F59E0B;--red:#EF4444;
+    --radius:16px;
+    --gradient:linear-gradient(135deg,var(--blue),var(--purple));
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);color:#1f2937;line-height:1.6;overflow-x:hidden;background:var(--white)}
+
+  .container{max-width:1120px;margin:0 auto;padding:0 24px}
+  .btn{display:inline-block;padding:14px 36px;border-radius:50px;font-weight:600;font-size:1rem;text-decoration:none;transition:all .25s;cursor:pointer;border:none}
+  .btn-primary{background:var(--gradient);color:#fff;box-shadow:0 4px 20px rgba(79,70,229,.35)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(79,70,229,.45)}
+  .btn-outline{background:transparent;color:var(--blue);border:2px solid rgba(79,70,229,.3)}
+  .btn-outline:hover{background:var(--light);border-color:var(--blue);transform:translateY(-2px)}
+  .section-label{text-transform:uppercase;letter-spacing:2px;font-size:.8rem;font-weight:700;color:var(--purple);margin-bottom:8px}
+  .section-title{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--dark);margin-bottom:16px;line-height:1.2}
+  .section-sub{max-width:620px;margin:0 auto 48px;color:var(--gray);font-size:1.05rem}
+  .gradient-text{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .fade-up{opacity:0}.fade-up.visible{animation:fadeUp .6s ease forwards}
+
+  /* Nav */
+  nav{position:fixed;top:0;width:100%;z-index:100;padding:14px 0;background:rgba(255,255,255,.62);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  nav .container{display:flex;align-items:center;justify-content:space-between}
+  nav .logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-size:1.2rem;font-weight:800;color:var(--dark)}
+  nav .logo img{width:34px;height:34px;border-radius:8px;object-fit:cover}
+  nav ul{display:flex;gap:24px;list-style:none}
+  nav ul a{text-decoration:none;font-size:.9rem;font-weight:500;color:var(--gray);transition:color .2s}
+  nav ul a:hover{color:var(--blue)}
+  .nav-cta{padding:8px 22px!important;font-size:.85rem!important;border-radius:50px}
+  @media(max-width:768px){nav ul{display:none}}
+
+  /* Hero */
+  /* Top padding (~header height) drops the video just below the fixed header
+     so the subject's head clears it. The offset sits behind the translucent
+     header, so no visible bar returns. */
+  .hero{padding:58px 0 80px;text-align:center;background:linear-gradient(170deg,#EEF2FF 0%,#fff 50%,#F5F3FF 100%);position:relative;overflow:hidden}
+  /* Hero text sits below the full-bleed video, so it needs its own top spacing
+     (the section no longer reserves space for the fixed nav). */
+  .hero .container{padding-top:32px}
+  .hero::before{content:"";position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.06),transparent 70%);top:-150px;right:-150px;pointer-events:none}
+  .hero::after{content:"";position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(79,70,229,.05),transparent 70%);bottom:-80px;left:-100px;pointer-events:none}
+  .hero h1{font-size:clamp(2.4rem,5.5vw,4rem);font-weight:900;line-height:1.1;color:var(--dark);margin-bottom:20px;letter-spacing:-.02em}
+  .hero p.tagline{max-width:580px;margin:0 auto 12px;font-size:1.2rem;color:var(--gray)}
+  .hero p.sub-tagline{max-width:480px;margin:0 auto 36px;font-size:.95rem;color:#9CA3AF}
+  .hero-buttons{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:48px}
+  .hero-logo{width:110px;height:110px;border-radius:26px;box-shadow:0 16px 48px rgba(79,70,229,.2);margin:0 auto 28px;animation:float 5s ease-in-out infinite;object-fit:cover}
+  .hero-badges{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+  .hero-badge{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--gray);font-weight:500}
+  .hero-badge i{color:var(--blue);font-size:.9rem}
+
+  /* Hero promo video — full-bleed, frameless, edges masked so it melts into
+     the hero gradient with no visible player chrome or hard rectangle. */
+  .hero-video{position:relative;width:100%;margin:0 auto 40px;aspect-ratio:16/9;max-height:64vh;overflow:hidden}
+  .hero-video video{width:100%;height:100%;display:block;object-fit:cover;object-position:center 22%;background:transparent;
+    -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 80%,transparent 100%);
+    mask-image:linear-gradient(to bottom,#000 0%,#000 80%,transparent 100%)}
+  @media(max-width:768px){.hero-video{aspect-ratio:4/3;max-height:52vh;margin-bottom:28px}}
+
+  /* Shared modal (used by template/pack content viewer) */
+  .modal-backdrop{position:fixed;inset:0;z-index:310;background:rgba(15,15,40,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+  .modal-backdrop.open{display:flex;animation:fadeIn .2s ease forwards}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes modalIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:none}}
+  .modal{background:#fff;border-radius:20px;max-width:620px;width:100%;margin:auto;box-shadow:0 24px 80px rgba(15,15,40,.3);animation:modalIn .28s cubic-bezier(.2,.8,.3,1) forwards;overflow:hidden;position:relative}
+  .modal-header{padding:28px 28px 20px;background:linear-gradient(135deg,#F5F3FF,#EEF2FF);position:relative}
+  .modal-header .modal-icon{width:52px;height:52px;border-radius:14px;background:var(--white);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--blue);margin-bottom:14px;box-shadow:0 4px 14px rgba(79,70,229,.15)}
+  .modal-header h3{font-size:1.4rem;font-weight:800;color:var(--dark);margin-bottom:6px;letter-spacing:-.01em}
+  .modal-header .modal-tagline{font-size:.9rem;color:var(--gray);line-height:1.5}
+  .modal-close{position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.7);color:var(--dark);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .modal-close:hover{background:#fff;transform:rotate(90deg)}
+  .modal-close:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .modal-body{padding:24px 28px 28px;max-height:60vh;overflow-y:auto}
+  .modal-section{margin-bottom:22px}
+  .modal-section:last-child{margin-bottom:0}
+  .modal-section h4{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .modal-section h4 i{font-size:.8rem}
+  .modal-section p{font-size:.92rem;color:#374151;line-height:1.6;margin-bottom:8px}
+  .modal-section ul{list-style:none;padding:0}
+  .modal-section ul li{position:relative;padding:6px 0 6px 24px;font-size:.9rem;color:#374151;line-height:1.55}
+  .modal-section ul li::before{content:"";position:absolute;left:6px;top:15px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+  .modal-section ul li strong{color:var(--dark);font-weight:600}
+  .modal-tip{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #FDE68A;border-radius:10px;padding:12px 14px;margin-top:16px;display:flex;gap:10px;align-items:flex-start}
+  .modal-tip i{color:#D97706;font-size:.9rem;margin-top:3px}
+  .modal-tip span{font-size:.85rem;color:#78350F;line-height:1.5}
+  .modal-cta{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:12px 24px;border-radius:50px;background:var(--gradient);color:#fff;font-weight:600;font-size:.9rem;text-decoration:none;transition:all .2s}
+  .modal-cta:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(79,70,229,.3);text-decoration:none}
+  @media(max-width:600px){.modal-backdrop{padding:16px}.modal-header{padding:22px 22px 16px}.modal-body{padding:20px 22px 22px;max-height:65vh}}
+
+  /* Pomodoro showcase */
+  .pomodoro{padding:80px 0;background:linear-gradient(170deg,#1E1B4B 0%,#312E81 100%);color:#fff;text-align:center;overflow:hidden;position:relative}
+  .pomodoro::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;border:2px solid rgba(255,255,255,.06);top:50%;left:50%;transform:translate(-50%,-50%)}
+  .pomodoro::after{content:"";position:absolute;width:500px;height:500px;border-radius:50%;border:1px solid rgba(255,255,255,.03);top:50%;left:50%;transform:translate(-50%,-50%)}
+  .pomo-ring{width:200px;height:200px;border-radius:50%;border:8px solid rgba(255,255,255,.1);margin:0 auto 32px;display:flex;align-items:center;justify-content:center;position:relative}
+  .pomo-ring::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:8px solid transparent;border-top-color:var(--orange);border-right-color:var(--orange);animation:spin 8s linear infinite}
+  .pomo-time{font-size:2.8rem;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.05em}
+  .pomo-label{font-size:.9rem;color:rgba(255,255,255,.6);margin-top:4px}
+  .pomodoro h2{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;margin-bottom:12px}
+  .pomodoro>p,.pomodoro .container>p{max-width:520px;margin:0 auto 32px;color:rgba(255,255,255,.7);font-size:1rem}
+  .pomo-features{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+  .pomo-feat{display:flex;align-items:center;gap:8px;font-size:.9rem;color:rgba(255,255,255,.8)}
+  .pomo-feat i{color:var(--orange);font-size:.85rem}
+
+  /* Privacy */
+  .privacy-section{padding:80px 0;text-align:center;background:linear-gradient(170deg,#fff,#F0FDF4)}
+  .privacy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;text-align:left}
+  .privacy-card{padding:28px;background:#fff;border-radius:var(--radius);border:1px solid #D1FAE5}
+  .privacy-card h3{font-size:1rem;font-weight:700;color:#065F46;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .privacy-card h3 i{color:var(--green);font-size:.95rem}
+  .privacy-card p{font-size:.9rem;color:var(--gray);line-height:1.6}
+
+  /* Team */
+  .team{padding:80px 0;text-align:center}
+  .team-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;text-align:left}
+  .team-visual{background:var(--gradient);border-radius:var(--radius);padding:40px;min-height:340px;position:relative;overflow:hidden}
+  .team-visual::before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06);top:-50px;right:-50px}
+  .team-visual-inner{background:rgba(255,255,255,.12);border-radius:12px;padding:24px;backdrop-filter:blur(4px)}
+  .team-visual-inner .activity{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+  .team-visual-inner .activity:last-child{border:none}
+  .team-visual-inner .av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0}
+  .team-visual-inner .activity span{color:#fff;font-size:.85rem}
+  .team-visual-inner .activity small{color:rgba(255,255,255,.5);font-size:.75rem;margin-left:auto;white-space:nowrap}
+  .team-content h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;color:var(--dark);margin-bottom:16px}
+  .team-content>p{color:var(--gray);font-size:1rem;margin-bottom:24px;line-height:1.7}
+  .team-content ul{list-style:none;margin-bottom:28px}
+  .team-content ul li{padding:6px 0;color:#374151;font-size:.95rem;display:flex;align-items:center;gap:8px}
+  .team-content ul li i{color:var(--green);font-size:.8rem;width:22px;text-align:center}
+  @media(max-width:768px){.team-grid{grid-template-columns:1fr}.team-grid>*:first-child{order:2}}
+
+  /* Siri */
+  .siri-section{padding:80px 0;background:var(--dark);color:#fff;text-align:center;position:relative;overflow:hidden}
+  .siri-section::before{content:"";position:absolute;width:200px;height:200px;border-radius:50%;background:linear-gradient(135deg,#818CF8,#C084FC);filter:blur(80px);opacity:.15;top:20%;left:10%}
+  .siri-section h2{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;margin-bottom:12px}
+  .siri-section>.container>p{color:rgba(255,255,255,.6);max-width:500px;margin:0 auto 40px;font-size:1rem}
+  .siri-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:800px;margin:0 auto}
+  .siri-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:20px;text-align:left;transition:all .25s}
+  .siri-card:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
+  .siri-card .phrase{font-size:.95rem;font-weight:600;color:#E0E7FF;margin-bottom:6px}
+  .siri-card .phrase i{margin-right:6px;color:#818CF8}
+  .siri-card .desc{font-size:.8rem;color:rgba(255,255,255,.45)}
+
+  /* Pricing */
+  .pricing{padding:80px 0;text-align:center}
+  .pricing-card{max-width:420px;margin:0 auto;background:#fff;border:2px solid rgba(79,70,229,.15);border-radius:20px;padding:40px;position:relative;overflow:hidden}
+  .pricing-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--gradient)}
+  .pricing-card .price{font-size:3rem;font-weight:900;color:var(--dark);margin:16px 0 4px}
+  .pricing-card .price-sub{font-size:.9rem;color:var(--gray);margin-bottom:24px}
+  .pricing-card ul{list-style:none;text-align:left;margin-bottom:28px}
+  .pricing-card ul li{padding:8px 0;font-size:.92rem;color:#374151;display:flex;align-items:center;gap:8px;border-bottom:1px solid #F3F4F6}
+  .pricing-card ul li i{color:var(--green);font-size:.8rem;width:16px;text-align:center}
+
+  /* CTA */
+  .final-cta{padding:80px 0;background:var(--gradient);text-align:center;color:#fff;position:relative;overflow:hidden}
+  .final-cta::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.06);top:-100px;right:-50px}
+  .final-cta h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;margin-bottom:12px}
+  .final-cta p{max-width:480px;margin:0 auto 32px;font-size:1.05rem;color:rgba(255,255,255,.8)}
+  .final-cta .btn{background:#fff;color:var(--blue);font-weight:700}
+  .final-cta .btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.2)}
+
+  /* Footer */
+  footer{padding:48px 0 32px;background:#111827;color:#9CA3AF}
+  .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:32px}
+  .footer-brand{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px}
+  .footer-brand img{width:28px;height:28px;border-radius:6px;object-fit:cover}
+  .footer-brand-text{font-size:.85rem;line-height:1.6;color:#6B7280}
+  footer h4{font-size:.85rem;font-weight:700;color:#D1D5DB;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+  footer ul{list-style:none}
+  footer ul li{margin-bottom:6px}
+  footer ul a{text-decoration:none;font-size:.88rem;color:#6B7280;transition:color .2s}
+  footer ul a:hover{color:#fff}
+  .footer-bottom{border-top:1px solid #1F2937;padding-top:20px;text-align:center;font-size:.8rem;color:#4B5563}
+  @media(max-width:768px){.footer-grid{grid-template-columns:1fr 1fr;gap:24px}}
+
+  /* Templates marketplace */
+  .templates{padding:80px 0;background:linear-gradient(170deg,#fff,#F5F3FF);text-align:center}
+  .tpl-controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:32px}
+  .tpl-chip{font-size:.85rem;font-weight:600;padding:8px 16px;border-radius:50px;border:1px solid rgba(79,70,229,.2);background:#fff;color:var(--blue);cursor:pointer;transition:all .2s;font-family:inherit}
+  .tpl-chip:hover{border-color:var(--blue)}
+  .tpl-chip[aria-pressed="true"]{background:var(--gradient);color:#fff;border-color:transparent}
+  .tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;text-align:left}
+  .tpl-card{background:#fff;border:1px solid #E5E7EB;border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;transition:all .3s}
+  .tpl-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(79,70,229,.1);border-color:rgba(79,70,229,.2)}
+  .tpl-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .tpl-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;flex-shrink:0}
+  .tpl-name{font-size:1.05rem;font-weight:700;color:var(--dark);line-height:1.2}
+  .tpl-meta{font-size:.78rem;color:var(--gray);margin-top:3px}
+  .tpl-desc{font-size:.88rem;color:var(--gray);line-height:1.55;margin-bottom:16px;flex:1}
+  .tpl-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .tpl-install{flex:1;text-align:center;padding:11px 16px;border-radius:50px;background:var(--gradient);color:#fff;font-weight:600;font-size:.85rem;text-decoration:none;transition:all .2s}
+  .tpl-install:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(79,70,229,.3)}
+  .tpl-copy{padding:11px 16px;border-radius:50px;border:1px solid #E5E7EB;background:#fff;color:var(--gray);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:inherit}
+  .tpl-copy:hover{border-color:var(--blue);color:var(--blue)}
+  .tpl-note{margin-top:28px;font-size:.85rem;color:var(--gray)}
+  .tpl-note i{color:var(--blue)}
+  .tpl-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:12px 22px;border-radius:50px;font-size:.9rem;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:all .25s;z-index:300}
+  .tpl-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .tpl-view{padding:11px 16px;border-radius:50px;border:1px solid #E5E7EB;background:#fff;color:var(--gray);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:inherit}
+  .tpl-view:hover{border-color:var(--purple);color:var(--purple)}
+
+  /* Domain Packs */
+  .pk-section{padding:80px 0 24px;background:#fff}
+  .pk-section .container{text-align:center}
+  .pk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;text-align:left;margin-top:8px}
+  .pk-card{background:linear-gradient(135deg,#F5F3FF,#fff);border:1px solid rgba(79,70,229,.18);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;transition:all .3s;position:relative;overflow:hidden}
+  .pk-card::after{content:"PACK";position:absolute;top:12px;right:12px;font-size:.62rem;font-weight:800;background:var(--gradient);color:#fff;padding:3px 9px;border-radius:10px;letter-spacing:1.2px}
+  .pk-card:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(79,70,229,.14);border-color:rgba(79,70,229,.4)}
+  .pk-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .pk-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;flex-shrink:0;position:relative}
+  .pk-icon .pk-count{position:absolute;bottom:-4px;right:-6px;background:var(--dark);color:#fff;font-size:.7rem;font-weight:800;padding:2px 7px;border-radius:10px;border:2px solid #fff}
+  .pk-name{font-size:1.1rem;font-weight:800;color:var(--dark);line-height:1.2}
+  .pk-meta{font-size:.78rem;color:var(--gray);margin-top:3px}
+  .pk-desc{font-size:.9rem;color:#374151;line-height:1.55;margin-bottom:14px;flex:1}
+  .pk-children{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+  .pk-chip{font-size:.74rem;font-weight:600;color:var(--blue);background:rgba(79,70,229,.08);padding:4px 10px;border-radius:50px}
+  .pk-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .pk-install{flex:1;text-align:center;padding:11px 16px;border-radius:50px;background:var(--gradient);color:#fff;font-weight:600;font-size:.85rem;text-decoration:none;transition:all .2s}
+  .pk-install:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(79,70,229,.3)}
+  .pk-view,.pk-copy{padding:11px 16px;border-radius:50px;border:1px solid #E5E7EB;background:#fff;color:var(--gray);font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:inherit}
+  .pk-view:hover,.pk-copy:hover{border-color:var(--blue);color:var(--blue)}
+
+  /* Content (template/pack contents) modal — re-uses .modal-backdrop / .modal */
+  .ct-task{padding:10px 12px;border-radius:10px;background:#F9FAFB;border:1px solid #F3F4F6;margin-bottom:8px}
+  .ct-task-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .ct-task-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .ct-task-dot.high{background:var(--red)}
+  .ct-task-dot.medium{background:var(--orange)}
+  .ct-task-dot.low{background:var(--green)}
+  .ct-task-title{font-size:.92rem;font-weight:600;color:var(--dark);flex:1;line-height:1.35}
+  .ct-task-day{font-size:.72rem;font-weight:600;color:var(--purple);background:rgba(124,58,237,.08);padding:2px 8px;border-radius:8px;white-space:nowrap}
+  .ct-task-notes{font-size:.82rem;color:#4B5563;line-height:1.5;margin-bottom:6px}
+  .ct-task-sub{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .ct-task-sub li{font-size:.74rem;color:#374151;background:#fff;border:1px solid #E5E7EB;padding:3px 8px;border-radius:6px;list-style:none}
+  .ct-task-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .ct-task-tag{font-size:.7rem;font-weight:600;color:var(--blue);background:rgba(79,70,229,.07);padding:2px 7px;border-radius:50px}
+  .ct-pack-project{margin-bottom:18px;border:1px solid #E5E7EB;border-radius:12px;overflow:hidden}
+  .ct-pack-project summary{cursor:pointer;padding:14px 16px;background:linear-gradient(135deg,#F5F3FF,#EEF2FF);font-weight:700;font-size:.95rem;color:var(--dark);display:flex;align-items:center;gap:10px;list-style:none}
+  .ct-pack-project summary::-webkit-details-marker{display:none}
+  .ct-pack-project summary::before{content:"\f078";font-family:"Font Awesome 6 Free";font-weight:900;font-size:.7rem;color:var(--gray);transition:transform .2s}
+  .ct-pack-project[open] summary::before{transform:rotate(180deg)}
+  .ct-pack-project summary .ct-count{margin-left:auto;font-size:.78rem;font-weight:600;color:var(--gray)}
+  .ct-pack-project .ct-pack-body{padding:14px 16px;background:#fff}
+  .ct-meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #F3F4F6}
+  .ct-meta-pill{font-size:.78rem;color:#374151;background:#F3F4F6;padding:4px 10px;border-radius:50px;display:inline-flex;align-items:center;gap:5px}
+  .ct-meta-pill i{color:var(--blue);font-size:.72rem}
+
+  /* Rabbit-hole launchpad */
+  .rh-launchpad{padding:64px 0 96px;background:linear-gradient(170deg,#fff,#F8FAFF)}
+  .rh-launchpad .container{text-align:center}
+  .rh-intro{font-size:.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple);margin-bottom:6px}
+  .rh-launchpad h2{font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;color:var(--dark);margin-bottom:10px}
+  .rh-launchpad p.lp-sub{max-width:520px;margin:0 auto 40px;color:var(--gray);font-size:1rem}
+  .rh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;text-align:left}
+  .rh-tile{background:#fff;border:1px solid #E5E7EB;border-radius:var(--radius);padding:24px;text-decoration:none;color:inherit;cursor:pointer;transition:all .25s;display:flex;flex-direction:column;gap:10px;position:relative;min-height:160px}
+  .rh-tile:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(79,70,229,.10);border-color:rgba(79,70,229,.3)}
+  .rh-tile:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+  .rh-tile .rh-tile-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;color:#fff;flex-shrink:0}
+  .rh-tile h3{font-size:1.02rem;font-weight:700;color:var(--dark);margin:0}
+  .rh-tile p{font-size:.85rem;color:var(--gray);line-height:1.5;margin:0;flex:1}
+  .rh-tile .rh-tile-cta{font-size:.78rem;font-weight:600;color:var(--blue);display:inline-flex;align-items:center;gap:5px;transition:gap .25s}
+  .rh-tile:hover .rh-tile-cta{gap:9px}
+  .rh-tile-badge{position:absolute;top:14px;right:14px;font-size:.6rem;font-weight:800;letter-spacing:1.2px;padding:3px 8px;border-radius:50px;background:var(--gradient);color:#fff}
+
+  /* Rabbit-hole panels (fullscreen overlays) */
+  .rh-panel{display:none}
+  .rh-panel.open{display:block;position:fixed;inset:0;z-index:250;background:#fff;overflow-y:auto;animation:rhSlideIn .28s cubic-bezier(.2,.8,.3,1) forwards}
+  @keyframes rhSlideIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .rh-panel-bar{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.85);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid rgba(0,0,0,.06);padding:12px 0}
+  .rh-panel-bar .container{display:flex;align-items:center;gap:12px}
+  .rh-panel-bar .rh-back{background:none;border:none;font-size:.95rem;color:var(--blue);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;font-family:inherit}
+  .rh-panel-bar .rh-back:hover{background:rgba(79,70,229,.08)}
+  .rh-panel-bar .rh-back:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .rh-panel-bar .rh-panel-title{font-size:.95rem;font-weight:700;color:var(--dark);flex:1}
+  .rh-panel-bar .rh-close{background:none;border:none;width:34px;height:34px;border-radius:50%;color:var(--dark);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .rh-panel-bar .rh-close:hover{background:rgba(0,0,0,.05)}
+  body.rh-locked{overflow:hidden}
+  /* Soften the previously full-section paddings when nested inside a panel */
+  .rh-panel .pomodoro,.rh-panel .siri-section,.rh-panel .privacy-section,.rh-panel .team,.rh-panel .pricing,.rh-panel .pk-section,.rh-panel .templates{padding-top:56px;padding-bottom:64px}
+
+  /* ===== Mac version + Apple-polish + generated imagery ===== */
+  .store-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .platform-line{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 0;font-size:.9rem;font-weight:600;color:var(--gray)}
+  .platform-line i{color:var(--blue);font-size:.85rem}
+
+  /* Mac showcase — generated product shot beside the copy */
+  .mac-show{padding:88px 0;background:linear-gradient(170deg,#fff,#F5F3FF);overflow:hidden}
+  .mac-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
+  .mac-figure{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:3/2;box-shadow:0 30px 70px rgba(30,27,75,.18)}
+  .mac-figure img{width:100%;height:100%;object-fit:cover;display:block}
+  .mac-figure::after{content:"";position:absolute;inset:0;border-radius:22px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)}
+  .pill-new{display:inline-flex;align-items:center;gap:7px;font-size:.72rem;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#fff;background:var(--gradient);padding:6px 13px;border-radius:50px;margin-bottom:16px}
+  .mac-copy h2{font-size:clamp(1.7rem,3.2vw,2.5rem);font-weight:800;color:var(--dark);margin-bottom:14px;letter-spacing:-.015em}
+  .mac-copy>p{color:var(--gray);font-size:1.03rem;line-height:1.7;margin-bottom:20px}
+  .mac-copy ul{list-style:none;margin-bottom:28px}
+  .mac-copy ul li{padding:6px 0;color:#374151;font-size:.96rem;display:flex;align-items:center;gap:10px}
+  .mac-copy ul li i{color:var(--green);font-size:.82rem;width:18px;text-align:center}
+  @media(max-width:768px){.mac-grid{grid-template-columns:1fr;gap:30px}.mac-grid>*:first-child{order:2}}
+
+  /* Generated banner imagery atop each rabbit-hole panel */
+  .rh-banner{height:210px;background-size:cover;background-position:center;position:relative}
+  .rh-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(79,70,229,.16),transparent 62%)}
+  @media(max-width:768px){.rh-banner{height:150px}}
+
+  /* Final CTA reuses the generated hero wave under a brand scrim */
+  .final-cta{background:#1E1B4B}
+  .final-cta .cta-art{position:absolute;inset:0;background:url("https://cdn.jsdelivr.net/gh/TeamDzX/workflow-landing-assets@main/img/hero.jpg") center/cover no-repeat;opacity:.6;z-index:0}
+  .final-cta .cta-scrim{position:absolute;inset:0;background:linear-gradient(135deg,rgba(79,70,229,.8),rgba(124,58,237,.82));z-index:1}
+  .final-cta .container{position:relative;z-index:2}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="#" class="logo"><img src="https://static.wixstatic.com/media/7b117f_8d663b332aef45dbbe316f16a7bca8a7~mv2.png" alt="WorkFlow">WorkFlow</a>
+    <ul>
+      <li><a href="#explore">Explore</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="https://www.opticell-limited.com/workflow-1">About</a></li>
+    </ul>
+    <a href="https://apps.apple.com/app/id6761440692" target="_top" rel="noopener" class="btn btn-primary nav-cta">Download</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-video" aria-hidden="true">
+    <video autoplay muted loop playsinline webkit-playsinline disablepictureinpicture disableremoteplayback preload="auto">
+      <source src="https://video.wixstatic.com/video/7b117f_260f0181c25e4b0ca832f679df7a28bf/1080p/mp4/file.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="container">
+    <h1 class="fade-up">Manage Projects<br><span class="gradient-text">Like a Pro</span></h1>
+    <p class="tagline fade-up">The privacy-first project manager with focus timer, smart lists, Siri shortcuts, and real-time team sharing.</p>
+    <p class="sub-tagline fade-up">No subscriptions. No tracking. Your data stays in your iCloud.</p>
+    <div class="hero-buttons store-row fade-up">
+      <a href="https://apps.apple.com/app/id6761440692" target="_top" rel="noopener" class="btn btn-primary"><i class="fa-brands fa-apple"></i> &nbsp;Download for iOS</a>
+      <a href="https://apps.apple.com/gb/app/workflow-manager-projects/id6777460380?mt=12" target="_top" rel="noopener" class="btn btn-primary"><i class="fa-brands fa-apple"></i> &nbsp;Download for Mac</a>
+      <a href="#explore" class="btn btn-outline">Explore</a>
+    </div>
+    <p class="platform-line fade-up"><i class="fa-solid fa-mobile-screen-button"></i> iPhone &nbsp;·&nbsp; <i class="fa-solid fa-tablet-screen-button"></i> iPad &nbsp;·&nbsp; <i class="fa-solid fa-desktop"></i> Mac &nbsp;— synced through your iCloud</p>
+    <div class="hero-badges fade-up">
+      <div class="hero-badge"><i class="fa-solid fa-lock"></i> Privacy-first</div>
+      <div class="hero-badge"><i class="fa-solid fa-cloud"></i> iCloud sync</div>
+      <div class="hero-badge"><i class="fa-solid fa-tag"></i> One-time purchase</div>
+      <div class="hero-badge"><i class="fa-solid fa-desktop"></i> Now on Mac</div>
+    </div>
+    <img src="https://static.wixstatic.com/media/7b117f_8d663b332aef45dbbe316f16a7bca8a7~mv2.png" alt="WorkFlow App Icon" class="hero-logo fade-up" style="margin-top:52px;margin-bottom:0">
+  </div>
+</section>
+
+<!-- Mac showcase -->
+<section class="mac-show">
+  <div class="container">
+    <div class="mac-grid">
+      <div class="mac-figure fade-up"><img src="https://cdn.jsdelivr.net/gh/TeamDzX/workflow-landing-assets@main/img/mac.jpg" alt="WorkFlow running on a Mac" loading="lazy"></div>
+      <div class="mac-copy fade-up">
+        <span class="pill-new"><i class="fa-solid fa-wand-magic-sparkles"></i> Now on Mac</span>
+        <h2>Your projects, native on the&nbsp;Mac</h2>
+        <p>WorkFlow now runs as a full Mac app — the same boards, focus timer, smart lists and templates, in a desktop-class window with menu commands and keyboard shortcuts. Everything stays in sync across iPhone, iPad and Mac through your own iCloud.</p>
+        <ul>
+          <li><i class="fa-solid fa-check"></i> Desktop window with sidebar navigation</li>
+          <li><i class="fa-solid fa-check"></i> Keyboard shortcuts &amp; native menu commands</li>
+          <li><i class="fa-solid fa-check"></i> Seamless iCloud sync with iPhone &amp; iPad</li>
+          <li><i class="fa-solid fa-check"></i> Same one-time purchase — no subscription</li>
+        </ul>
+        <a href="https://apps.apple.com/gb/app/workflow-manager-projects/id6777460380?mt=12" target="_top" rel="noopener" class="btn btn-primary"><i class="fa-brands fa-apple"></i> &nbsp;Download for Mac</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Launchpad: rabbit-hole tiles -->
+<section class="rh-launchpad" id="explore">
+  <div class="container">
+    <p class="rh-intro">Explore</p>
+    <h2>Pick the part you care about.</h2>
+    <p class="lp-sub">Each tile opens its own room with the deep details. Close it whenever you want to come back here.</p>
+    <div class="rh-grid">
+      <a href="#focus" class="rh-tile">
+        <div class="rh-tile-icon" style="background:linear-gradient(135deg,#F59E0B,#EF4444)"><i class="fa-solid fa-bullseye"></i></div>
+        <h3>Focus Timer</h3>
+        <p>Pomodoro built in. Auto break cycling and time logging per task.</p>
+        <span class="rh-tile-cta">Open <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a href="#share" class="rh-tile">
+        <div class="rh-tile-icon" style="background:linear-gradient(135deg,#4F46E5,#7C3AED)"><i class="fa-solid fa-people-group"></i></div>
+        <h3>Team Sharing</h3>
+        <p>Real-time CloudKit sharing with comments, mentions, and a per-project change badge.</p>
+        <span class="rh-tile-cta">Open <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a href="#templates" class="rh-tile">
+        <span class="rh-tile-badge">NEW</span>
+        <div class="rh-tile-icon" style="background:linear-gradient(135deg,#5856D6,#7C3AED)"><i class="fa-solid fa-layer-group"></i></div>
+        <h3>Templates &amp; Packs</h3>
+        <p>One-tap install of a single template or a whole domain pack — view the contents before you commit.</p>
+        <span class="rh-tile-cta">Open <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a href="#privacy" class="rh-tile">
+        <div class="rh-tile-icon" style="background:linear-gradient(135deg,#10B981,#059669)"><i class="fa-solid fa-shield-halved"></i></div>
+        <h3>Privacy &amp; iCloud</h3>
+        <p>Your tasks live in your iCloud. Zero trackers, no accounts, fully offline-capable.</p>
+        <span class="rh-tile-cta">Open <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a href="#siri" class="rh-tile">
+        <div class="rh-tile-icon" style="background:linear-gradient(135deg,#C084FC,#818CF8)"><i class="fa-solid fa-microphone"></i></div>
+        <h3>Siri &amp; Shortcuts</h3>
+        <p>Add tasks, start a focus session or summarise the day — all by voice.</p>
+        <span class="rh-tile-cta">Open <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+      <a href="#pricing" class="rh-tile">
+        <div class="rh-tile-icon" style="background:linear-gradient(135deg,#06B6D4,#0EA5E9)"><i class="fa-solid fa-tag"></i></div>
+        <h3>Pricing</h3>
+        <p>One-time purchase, no subscription, every future update included.</p>
+        <span class="rh-tile-cta">Open <i class="fa-solid fa-arrow-right"></i></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Rabbit-hole: Templates & Packs -->
+<section class="rh-panel" id="templates" aria-hidden="true" role="region" aria-label="Templates and packs">
+  <div class="rh-panel-bar">
+    <div class="container">
+      <button type="button" class="rh-back" data-rh-close><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <span class="rh-panel-title">Templates &amp; Packs</span>
+      <button type="button" class="rh-close" aria-label="Close" data-rh-close><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+  <div class="rh-banner" aria-hidden="true" style="background-image:url('https://cdn.jsdelivr.net/gh/TeamDzX/workflow-landing-assets@main/img/templates.jpg')"></div>
+  <section class="pk-section">
+    <div class="container">
+      <p class="section-label">New · One tap, many projects</p>
+      <h2 class="section-title">Install a <span class="gradient-text">Domain Pack</span></h2>
+      <p class="section-sub">Domain Packs bundle several templates that belong together — so a developer team, an HR manager, or a marketing lead can stand up an entire workflow in a single tap.</p>
+      <div class="pk-grid" id="pkGrid"></div>
+    </div>
+  </section>
+  <section class="templates">
+    <div class="container">
+      <p class="section-label">Individual setup</p>
+      <h2 class="section-title">Or pick a single <span class="gradient-text">Template</span></h2>
+      <p class="section-sub">Browse the full catalogue. Tap <strong>View contents</strong> to see every task, subtask, due-date offset and tag before installing — nothing is added to your WorkFlow without your tap.</p>
+      <div class="tpl-controls" id="tplChips"></div>
+      <div class="tpl-grid" id="tplGrid"></div>
+      <p class="tpl-note"><i class="fa-solid fa-circle-info"></i> &nbsp;Installed templates and packs live under <strong>Settings → Project Templates → Your Library</strong>, where you can remove them anytime. Domain Packs require WorkFlow 3.0 or later; individual templates work on 2.9+.</p>
+    </div>
+  </section>
+</section>
+<div class="tpl-toast" id="tplToast" role="status" aria-live="polite"></div>
+
+<!-- Content modal — shows the full task list of a template or pack -->
+<div class="modal-backdrop" id="contentModal" role="dialog" aria-modal="true" aria-labelledby="ctTitle" aria-hidden="true">
+  <div class="modal" role="document" style="max-width:720px">
+    <div class="modal-header">
+      <button class="modal-close" type="button" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-icon" id="ctIcon"><i class="fa-solid fa-list-check"></i></div>
+      <h3 id="ctTitle">Contents</h3>
+      <p class="modal-tagline" id="ctTagline">Everything that will land in your WorkFlow.</p>
+    </div>
+    <div class="modal-body" id="ctBody"></div>
+  </div>
+</div>
+
+<!-- Rabbit-hole: Focus Timer -->
+<section class="rh-panel" id="focus" aria-hidden="true" role="region" aria-label="Focus Timer">
+  <div class="rh-panel-bar">
+    <div class="container">
+      <button type="button" class="rh-back" data-rh-close><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <span class="rh-panel-title">Focus Timer</span>
+      <button type="button" class="rh-close" aria-label="Close" data-rh-close><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+  <div class="rh-banner" aria-hidden="true" style="background-image:url('https://cdn.jsdelivr.net/gh/TeamDzX/workflow-landing-assets@main/img/focus.jpg')"></div>
+  <section class="pomodoro">
+    <div class="container">
+      <p class="section-label" style="color:rgba(255,255,255,.5)">Stay in the zone</p>
+      <div class="pomo-ring">
+        <div>
+          <div class="pomo-time">24:37</div>
+          <div class="pomo-label">Focus Time</div>
+        </div>
+      </div>
+      <h2>Built-In Focus Timer</h2>
+      <p>The Pomodoro technique, integrated directly into your tasks. Start a focus session, and your time is automatically logged — no separate app needed.</p>
+      <div class="pomo-features">
+        <div class="pomo-feat"><i class="fa-solid fa-clock"></i> 4 Duration Presets</div>
+        <div class="pomo-feat"><i class="fa-solid fa-arrows-rotate"></i> Auto Break Cycling</div>
+        <div class="pomo-feat"><i class="fa-solid fa-chart-simple"></i> Session Counting</div>
+        <div class="pomo-feat"><i class="fa-solid fa-stopwatch"></i> Time Auto-Logged</div>
+        <div class="pomo-feat"><i class="fa-solid fa-hand-pointer"></i> Haptic Feedback</div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- Rabbit-hole: Privacy -->
+<section class="rh-panel" id="privacy" aria-hidden="true" role="region" aria-label="Privacy and iCloud">
+  <div class="rh-panel-bar">
+    <div class="container">
+      <button type="button" class="rh-back" data-rh-close><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <span class="rh-panel-title">Privacy &amp; iCloud</span>
+      <button type="button" class="rh-close" aria-label="Close" data-rh-close><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+  <div class="rh-banner" aria-hidden="true" style="background-image:url('https://cdn.jsdelivr.net/gh/TeamDzX/workflow-landing-assets@main/img/privacy.jpg')"></div>
+  <section class="privacy-section">
+    <div class="container">
+      <p class="section-label" style="color:var(--green)">Your data, your control</p>
+      <h2 class="section-title">Privacy by Design</h2>
+      <p class="section-sub">In a world of data-hungry apps, WorkFlow takes a different approach.</p>
+      <div class="privacy-grid">
+        <div class="privacy-card">
+          <h3><i class="fa-solid fa-shield-halved"></i> No Tracking</h3>
+          <p>Zero analytics, zero telemetry, zero third-party SDKs. We literally cannot see your data.</p>
+        </div>
+        <div class="privacy-card">
+          <h3><i class="fa-solid fa-cloud"></i> Your iCloud</h3>
+          <p>Data syncs through your personal iCloud account — not our servers. We have no backend.</p>
+        </div>
+        <div class="privacy-card">
+          <h3><i class="fa-solid fa-ban"></i> No Ads</h3>
+          <p>No advertising, no sponsored content, no data selling. Ever. The app price is the business model.</p>
+        </div>
+        <div class="privacy-card">
+          <h3><i class="fa-solid fa-trash-can"></i> Full Deletion</h3>
+          <p>Delete the app and your data is gone. No residual cloud storage, no account to deactivate.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- Rabbit-hole: Team Sharing -->
+<section class="rh-panel" id="share" aria-hidden="true" role="region" aria-label="Team sharing">
+  <div class="rh-panel-bar">
+    <div class="container">
+      <button type="button" class="rh-back" data-rh-close><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <span class="rh-panel-title">Team Sharing</span>
+      <button type="button" class="rh-close" aria-label="Close" data-rh-close><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+  <div class="rh-banner" aria-hidden="true" style="background-image:url('https://cdn.jsdelivr.net/gh/TeamDzX/workflow-landing-assets@main/img/share.jpg')"></div>
+  <section class="team">
+    <div class="container">
+      <div class="team-grid">
+        <div class="team-visual">
+          <div class="team-visual-inner">
+            <div class="activity"><div class="av" style="background:#6366F1">SC</div><span>Sarah completed "Design homepage"</span><small>2m ago</small></div>
+            <div class="activity"><div class="av" style="background:#F59E0B">JP</div><span>James started timer on "API docs"</span><small>5m ago</small></div>
+            <div class="activity"><div class="av" style="background:#10B981">ET</div><span>Emily added 3 subtasks</span><small>12m ago</small></div>
+            <div class="activity"><div class="av" style="background:#EC4899">AR</div><span>Alex moved task to In Progress</span><small>18m ago</small></div>
+            <div class="activity"><div class="av" style="background:#8B5CF6">SC</div><span>Sarah shared "Website Redesign"</span><small>1h ago</small></div>
+          </div>
+        </div>
+        <div class="team-content">
+          <p class="section-label">Real-time collaboration</p>
+          <h2>Share Projects with Your Team</h2>
+          <p>Invite team members via iMessage, email, or link. They just need an iCloud account — no sign-ups, no subscriptions, no per-seat pricing.</p>
+          <ul>
+            <li><i class="fa-solid fa-check"></i> Share via Apple's native sharing</li>
+            <li><i class="fa-solid fa-check"></i> Read or read/write permissions</li>
+            <li><i class="fa-solid fa-check"></i> See who's working on what</li>
+            <li><i class="fa-solid fa-check"></i> Changes sync in real-time</li>
+            <li><i class="fa-solid fa-check"></i> Manage participants anytime</li>
+            <li><i class="fa-solid fa-check"></i> Stop sharing with one tap</li>
+          </ul>
+          <a href="https://apps.apple.com/app/id6761440692" target="_top" rel="noopener" class="btn btn-primary">Get WorkFlow</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- Rabbit-hole: Siri -->
+<section class="rh-panel" id="siri" aria-hidden="true" role="region" aria-label="Siri and Shortcuts">
+  <div class="rh-panel-bar">
+    <div class="container">
+      <button type="button" class="rh-back" data-rh-close><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <span class="rh-panel-title">Siri &amp; Shortcuts</span>
+      <button type="button" class="rh-close" aria-label="Close" data-rh-close><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+  <section class="siri-section">
+    <div class="container">
+      <p class="section-label" style="color:#818CF8">Hands-free productivity</p>
+      <h2>Works with Siri &amp; Shortcuts</h2>
+      <p>Five built-in shortcuts that work with Siri voice commands and the Shortcuts app for automation.</p>
+      <div class="siri-grid">
+        <div class="siri-card">
+          <div class="phrase"><i class="fa-solid fa-microphone"></i> "Add a task in WorkFlow"</div>
+          <div class="desc">Create tasks with title, project, priority, and due date via voice.</div>
+        </div>
+        <div class="siri-card">
+          <div class="phrase"><i class="fa-solid fa-microphone"></i> "What's overdue?"</div>
+          <div class="desc">Get a quick list of your overdue tasks read back to you.</div>
+        </div>
+        <div class="siri-card">
+          <div class="phrase"><i class="fa-solid fa-microphone"></i> "What's due today?"</div>
+          <div class="desc">Hear today's tasks with priorities while you start your morning.</div>
+        </div>
+        <div class="siri-card">
+          <div class="phrase"><i class="fa-solid fa-microphone"></i> "Complete [task name]"</div>
+          <div class="desc">Mark any task done by name without touching your phone.</div>
+        </div>
+        <div class="siri-card">
+          <div class="phrase"><i class="fa-solid fa-microphone"></i> "Task summary"</div>
+          <div class="desc">Get total, completed, overdue, and due-today counts instantly.</div>
+        </div>
+        <div class="siri-card">
+          <div class="phrase"><i class="fa-solid fa-wand-magic-sparkles"></i> Shortcuts App</div>
+          <div class="desc">Chain WorkFlow actions with other apps. Auto-add tasks from emails, triggers, and more.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- Rabbit-hole: Pricing -->
+<section class="rh-panel" id="pricing" aria-hidden="true" role="region" aria-label="Pricing">
+  <div class="rh-panel-bar">
+    <div class="container">
+      <button type="button" class="rh-back" data-rh-close><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <span class="rh-panel-title">Pricing</span>
+      <button type="button" class="rh-close" aria-label="Close" data-rh-close><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+  <section class="pricing">
+    <div class="container">
+      <p class="section-label">Simple pricing</p>
+      <h2 class="section-title">One Price. Everything Included.</h2>
+      <p class="section-sub">No subscriptions, no tiers, no feature gating. Premium quality, one-time purchase.</p>
+      <div class="pricing-card">
+        <div style="font-size:.85rem;font-weight:600;color:var(--purple)">FULL VERSION</div>
+        <div class="price">£19.99</div>
+        <div class="price-sub">One-time purchase. All features included. Free updates.</div>
+        <ul>
+          <li><i class="fa-solid fa-check"></i> Kanban board with drag-and-drop</li>
+          <li><i class="fa-solid fa-check"></i> 4 calendar views (Year/Month/Week/Day)</li>
+          <li><i class="fa-solid fa-check"></i> Focus Timer / Pomodoro</li>
+          <li><i class="fa-solid fa-check"></i> Smart Lists &amp; saved filters</li>
+          <li><i class="fa-solid fa-check"></i> Siri Shortcuts (5 commands)</li>
+          <li><i class="fa-solid fa-check"></i> Actionable notifications</li>
+          <li><i class="fa-solid fa-check"></i> Dashboard analytics</li>
+          <li><i class="fa-solid fa-check"></i> Two-way calendar sync</li>
+          <li><i class="fa-solid fa-check"></i> iCloud team sharing</li>
+          <li><i class="fa-solid fa-check"></i> Subtasks, tags, time tracking</li>
+          <li><i class="fa-solid fa-check"></i> CSV import &amp; export</li>
+          <li><i class="fa-solid fa-check"></i> File attachments</li>
+          <li><i class="fa-solid fa-check"></i> Recurring tasks</li>
+          <li><i class="fa-solid fa-check"></i> Activity log</li>
+          <li><i class="fa-solid fa-check"></i> Full accessibility (VoiceOver)</li>
+          <li><i class="fa-solid fa-check"></i> Zero tracking, zero ads</li>
+        </ul>
+        <a href="https://apps.apple.com/app/id6761440692" target="_top" rel="noopener" class="btn btn-primary" style="width:100%;text-align:center;display:block"><i class="fa-brands fa-apple"></i> &nbsp;Download on the App Store</a>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta">
+  <div class="cta-art" aria-hidden="true"></div>
+  <div class="cta-scrim" aria-hidden="true"></div>
+  <div class="container">
+    <h2>Ready to Take Control of Your Projects?</h2>
+    <p>Privacy-first project management on iPhone, iPad and Mac. One-time purchase, no subscriptions.</p>
+    <div class="store-row">
+      <a href="https://apps.apple.com/app/id6761440692" target="_top" rel="noopener" class="btn"><i class="fa-brands fa-apple"></i> &nbsp;Get for iOS</a>
+      <a href="https://apps.apple.com/gb/app/workflow-manager-projects/id6777460380?mt=12" target="_top" rel="noopener" class="btn"><i class="fa-brands fa-apple"></i> &nbsp;Get for Mac</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand"><img src="https://static.wixstatic.com/media/7b117f_8d663b332aef45dbbe316f16a7bca8a7~mv2.png" alt="WorkFlow">WorkFlow</div>
+        <p class="footer-brand-text">The privacy-first project manager for iPhone, iPad &amp; Mac. Built with SwiftUI, powered by iCloud, designed for teams who care about their data.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#focus">Focus Timer</a></li>
+          <li><a href="#share">Team Sharing</a></li>
+          <li><a href="#templates">Templates &amp; Packs</a></li>
+          <li><a href="#siri">Siri Shortcuts</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="https://www.opticell-limited.com/workflow-1">Privacy Policy</a></li>
+          <li><a href="#">Support</a></li>
+          <li><a href="#">Release Notes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="mailto:workflow@opticell-limited.com"><i class="fa-solid fa-envelope"></i> &nbsp;Email</a></li>
+          <li><a href="https://apps.apple.com/app/id6761440692" target="_top" rel="noopener"><i class="fa-brands fa-app-store-ios"></i> &nbsp;iOS App Store</a></li>
+          <li><a href="https://apps.apple.com/gb/app/workflow-manager-projects/id6777460380?mt=12" target="_top" rel="noopener"><i class="fa-brands fa-apple"></i> &nbsp;Mac App Store</a></li>
+          <li><a href="https://www.opticell-limited.com"><i class="fa-solid fa-globe"></i> &nbsp;Opticell Limited</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 Opticell Limited. All rights reserved. Made with care for people who value their privacy.</div>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+/* ---------- Rabbit-hole panels ---------- */
+// Tiles link to #focus / #share / #templates / #privacy / #siri / #pricing.
+// We intercept hash changes, lock body scroll, fade in the matching .rh-panel,
+// and route Esc / the close button back to the launchpad. Hash routing means
+// browser Back/Forward works naturally and tiles are deep-linkable.
+const RH_IDS = new Set(['focus', 'share', 'templates', 'privacy', 'siri', 'pricing']);
+let rhLastFocus = null;
+
+function rhOpen(id) {
+  document.querySelectorAll('.rh-panel.open').forEach(p => rhCloseElement(p, /*restoreFocus*/ false));
+  const panel = document.getElementById(id);
+  if (!panel || !panel.classList.contains('rh-panel')) return;
+  rhLastFocus = document.activeElement;
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('rh-locked');
+  // Move focus into the panel so screen readers + keyboard land in context.
+  const focusTarget = panel.querySelector('.rh-back') || panel;
+  focusTarget.focus({ preventScroll: true });
+  panel.scrollTop = 0;
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+function rhCloseElement(panel, restoreFocus) {
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('rh-locked');
+  if (restoreFocus && rhLastFocus && document.body.contains(rhLastFocus)) {
+    rhLastFocus.focus({ preventScroll: true });
+  }
+}
+
+function rhCloseAll() {
+  document.querySelectorAll('.rh-panel.open').forEach(p => rhCloseElement(p, true));
+}
+
+// Clear the URL hash WITHOUT scroll-jumping. We use replaceState (cheaper than
+// pushState) because the entry was just a hash-anchor, not a real navigation.
+function rhClearHash() {
+  if (location.hash) {
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+}
+
+function rhHandleHash() {
+  const id = (location.hash || '').replace(/^#/, '');
+  if (RH_IDS.has(id)) {
+    rhOpen(id);
+  } else {
+    rhCloseAll();
+  }
+}
+
+window.addEventListener('hashchange', rhHandleHash);
+window.addEventListener('DOMContentLoaded', rhHandleHash);
+
+// Close buttons (back arrow + X) inside any panel.
+document.addEventListener('click', (e) => {
+  const closer = e.target.closest('[data-rh-close]');
+  if (!closer) return;
+  e.preventDefault();
+  rhClearHash();
+  rhCloseAll();
+});
+
+// Esc closes the current panel — but only if the content modal isn't open on
+// top of it. The content modal has its own Esc handler defined later that runs
+// independently, so we defer to it for the first key press.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  const ctOpenAlready = document.querySelector('#contentModal.open');
+  if (ctOpenAlready) return;
+  const anyOpen = document.querySelector('.rh-panel.open');
+  if (anyOpen) { rhClearHash(); rhCloseAll(); }
+});
+
+/* ---------- Template Marketplace ---------- */
+const TPL_CATEGORIES = ["Work", "Life", "Learning", "Events"];
+
+// Each template mirrors the WorkFlow app's install contract. `fa` and `color`
+// are for display here only; the install payload is built from the rest.
+const TEMPLATES = [
+  { id:"software-sprint", name:"Software Sprint", icon:"hammer.fill", fa:"fa-hammer", colorHex:"#5856D6",
+    summary:"Two-week engineering sprint with planning, standups, and retro.",
+    detail:"A complete two-week sprint: planning, daily check-ins, mid-sprint review, code freeze, QA, demo prep, and retrospective.",
+    category:"Work", tasks:[
+      {title:"Sprint planning",notes:"Review the backlog, estimate tasks, and commit to the sprint goal.",priority:"High",daysFromStart:0,subtasks:["Review backlog","Estimate story points","Define sprint goal","Assign owners"],tags:["sprint","planning"]},
+      {title:"Mid-sprint check-in",notes:"Confirm we're on track. Reshuffle if scope is at risk.",priority:"Medium",daysFromStart:5,subtasks:["Status per workstream","Identify blockers"],tags:["sprint"]},
+      {title:"Design review",notes:"Walk through any new UI/UX work with the design team.",priority:"Medium",daysFromStart:3,subtasks:[],tags:["design"]},
+      {title:"Code freeze",notes:"No new features after this point — bug fixes and polish only.",priority:"High",daysFromStart:10,subtasks:[],tags:["sprint"]},
+      {title:"QA pass",notes:"Regression test the build before demo.",priority:"High",daysFromStart:12,subtasks:["Smoke test happy path","Run regression suite","File bugs in tracker"],tags:["qa"]},
+      {title:"Demo prep",notes:"Prepare the showcase. Pick the strongest 2–3 stories.",priority:"Medium",daysFromStart:13,subtasks:["Slide deck","Demo script","Backup recordings"],tags:["demo"]},
+      {title:"Sprint demo",notes:"Present the sprint outcomes to stakeholders.",priority:"High",daysFromStart:14,subtasks:[],tags:["demo"]},
+      {title:"Retrospective",notes:"What went well, what didn't, what we'll change.",priority:"Medium",daysFromStart:14,subtasks:["Went well","Didn't go well","Action items"],tags:["sprint","retro"]}
+    ]},
+  { id:"wedding-planning", name:"Wedding Planning", icon:"heart.fill", fa:"fa-heart", colorHex:"#FF2D55",
+    summary:"Twelve-month wedding milestone timeline from budget to ceremony.",
+    detail:"A milestone-based wedding plan from initial budget through the rehearsal dinner. Tasks scale across a full year.",
+    category:"Events", tasks:[
+      {title:"Set wedding budget",notes:"Decide total spend and rough allocation per category.",priority:"High",daysFromStart:0,subtasks:["Total budget","Venue allocation","Catering allocation","Photography allocation","Buffer (10–15%)"],tags:["budget"]},
+      {title:"Book venue",notes:"Visit shortlisted venues, compare, and confirm.",priority:"High",daysFromStart:14,subtasks:["Shortlist 3 venues","Tour each","Compare quotes","Sign contract"],tags:["venue"]},
+      {title:"Send save-the-dates",notes:"Mail or email save-the-date announcements.",priority:"Medium",daysFromStart:30,subtasks:["Draft guest list","Design card","Send"],tags:["guests"]},
+      {title:"Book photographer",notes:"Lock in the photographer and discuss shot list.",priority:"High",daysFromStart:60,subtasks:["Compare portfolios","Sign contract","Plan engagement shoot"],tags:["photo"]},
+      {title:"Order invitations",notes:"Send invitations 8 weeks before the wedding.",priority:"Medium",daysFromStart:180,subtasks:["Design","Proof","Print","Mail"],tags:["guests"]},
+      {title:"Cake tasting",notes:"Tasting appointment and final cake design.",priority:"Low",daysFromStart:210,subtasks:[],tags:["catering"]},
+      {title:"Final guest count to caterer",notes:"Confirm headcount with the caterer.",priority:"High",daysFromStart:330,subtasks:["Reconcile RSVPs","Send count"],tags:["catering","guests"]},
+      {title:"Rehearsal dinner",notes:"Final walk-through and rehearsal dinner.",priority:"High",daysFromStart:364,subtasks:["Venue confirmed","Speeches sequenced"],tags:["rehearsal"]},
+      {title:"Wedding day",notes:"The big day. Trust the plan and enjoy it.",priority:"High",daysFromStart:365,subtasks:[],tags:["ceremony"]}
+    ]},
+  { id:"move-in", name:"Move-In Checklist", icon:"shippingbox.fill", fa:"fa-box", colorHex:"#FF9500",
+    summary:"Two-week move plan: packing, logistics, and post-move setup.",
+    detail:"Prep before the move, the move itself, and the first week settling in. Moving day is day 0.",
+    category:"Life", tasks:[
+      {title:"Forward mail and update addresses",notes:"Update postal forwarding plus every account that sends physical mail.",priority:"High",daysFromStart:-14,subtasks:["Postal forwarding","Banks","Employer / payroll","Subscriptions","Driver's license"],tags:["admin"]},
+      {title:"Book movers",notes:"Get 3 quotes, lock in date and crew size.",priority:"High",daysFromStart:-10,subtasks:["Get quotes","Confirm date","Reserve elevator at new place"],tags:["logistics"]},
+      {title:"Pack non-essentials",notes:"Books, decor, off-season clothes.",priority:"Medium",daysFromStart:-7,subtasks:["Label boxes by room","Photograph valuables"],tags:["packing"]},
+      {title:"Pack essentials box",notes:"Toothbrush, chargers, change of clothes, first-night supplies.",priority:"High",daysFromStart:-1,subtasks:[],tags:["packing"]},
+      {title:"Moving day",notes:"Be ready 30 min before movers arrive.",priority:"High",daysFromStart:0,subtasks:["Cash for tips","Final walkthrough","Hand over keys"],tags:["move"]},
+      {title:"Set up utilities",notes:"Internet, electricity, water, gas — confirm transfers landed.",priority:"High",daysFromStart:1,subtasks:["Internet","Electricity","Water","Gas"],tags:["admin"]},
+      {title:"Unpack essentials",notes:"Kitchen, bedroom, bathroom — get the basics functional first.",priority:"Medium",daysFromStart:2,subtasks:["Kitchen","Bedroom","Bathroom"],tags:["unpacking"]},
+      {title:"Find local doctor and dentist",notes:"Transfer records or register with new providers.",priority:"Low",daysFromStart:14,subtasks:[],tags:["admin"]}
+    ]},
+  { id:"course-syllabus", name:"Course Syllabus", icon:"graduationcap.fill", fa:"fa-graduation-cap", colorHex:"#34C759",
+    summary:"Semester pacing template: midterm, project, and finals.",
+    detail:"A ~15-week semester with reading kickoff, midterm prep, project milestones, and final exam prep.",
+    category:"Learning", tasks:[
+      {title:"Read syllabus and mark deadlines",notes:"Block off every assignment and exam date on your calendar.",priority:"High",daysFromStart:0,subtasks:["Add all deadlines to calendar","Flag overlapping weeks"],tags:["planning"]},
+      {title:"Order textbooks and materials",notes:"Buy, borrow, or rent. PDF first if budget is tight.",priority:"Medium",daysFromStart:3,subtasks:[],tags:["setup"]},
+      {title:"Set up note-taking system",notes:"Folders, templates, citation manager.",priority:"Low",daysFromStart:7,subtasks:["Folders per topic","Citation manager"],tags:["setup"]},
+      {title:"Midterm prep",notes:"Two weeks of focused review before midterm.",priority:"High",daysFromStart:35,subtasks:["Review lecture notes","Past exams","Practice problems","Study group"],tags:["exam"]},
+      {title:"Midterm exam",notes:"The exam itself. Bring required materials.",priority:"High",daysFromStart:49,subtasks:[],tags:["exam"]},
+      {title:"Choose project topic",notes:"Submit topic proposal to professor.",priority:"Medium",daysFromStart:56,subtasks:["Brainstorm 3 options","Get feedback","Submit"],tags:["project"]},
+      {title:"Project draft",notes:"First full draft of project deliverable.",priority:"Medium",daysFromStart:84,subtasks:[],tags:["project"]},
+      {title:"Final exam prep",notes:"Two-week sprint covering full semester content.",priority:"High",daysFromStart:91,subtasks:["Cumulative review","Past finals","Office hours"],tags:["exam"]},
+      {title:"Final exam",notes:"The big one.",priority:"High",daysFromStart:105,subtasks:[],tags:["exam"]}
+    ]},
+  { id:"product-launch", name:"Product Launch", icon:"paperplane.fill", fa:"fa-paper-plane", colorHex:"#007AFF",
+    summary:"Six-week marketing launch plan from positioning to GA.",
+    detail:"Positioning, creative, beta, PR outreach, and the launch-day playbook. The go-to-market side of a launch.",
+    category:"Work", tasks:[
+      {title:"Lock positioning and messaging",notes:"One-pager: who, what, why, against whom.",priority:"High",daysFromStart:0,subtasks:["Audience","Promise","Proof","Competitive frame"],tags:["messaging"]},
+      {title:"Creative kickoff",notes:"Brief design / video / copy teams. Lock visual direction.",priority:"High",daysFromStart:3,subtasks:["Brief design","Brief video","Brief copy"],tags:["creative"]},
+      {title:"Closed beta",notes:"Invite 50–100 early users and gather feedback.",priority:"Medium",daysFromStart:14,subtasks:["Recruit beta cohort","Onboarding email","Feedback survey"],tags:["beta"]},
+      {title:"Press / influencer outreach",notes:"Pitch under embargo to a shortlist of relevant outlets.",priority:"Medium",daysFromStart:21,subtasks:["Build press list","Draft pitch","Send under embargo"],tags:["pr"]},
+      {title:"Final assets ready",notes:"Landing page, ads, social posts, email sequences.",priority:"High",daysFromStart:35,subtasks:["Landing page","Ad creative","Social posts","Email sequence"],tags:["assets"]},
+      {title:"Launch dress rehearsal",notes:"End-to-end walkthrough of the launch-day playbook.",priority:"High",daysFromStart:40,subtasks:["Confirm publish queue","On-call coverage","Comms triage"],tags:["rehearsal"]},
+      {title:"Launch day",notes:"Ship it. Monitor channels.",priority:"High",daysFromStart:42,subtasks:["Press release live","Social posts queued","Monitor support inbox"],tags:["launch"]},
+      {title:"Post-launch review",notes:"Metrics + lessons learned, two weeks in.",priority:"Medium",daysFromStart:56,subtasks:["Funnel metrics","Press coverage","Customer feedback"],tags:["review"]}
+    ]},
+  { id:"new-hire-onboarding", name:"New Hire Onboarding", icon:"person.fill.badge.plus", fa:"fa-user-plus", colorHex:"#00C7BE",
+    summary:"Four-week onboarding plan: tools, context, first ship.",
+    detail:"A 30-day plan to take a new hire from setup to shipping their first real piece of work.",
+    category:"Work", tasks:[
+      {title:"Day-one setup",notes:"Laptop, accounts, badge, and 1:1s scheduled.",priority:"High",daysFromStart:0,subtasks:["Laptop provisioned","Accounts created","1:1s scheduled","Buddy assigned"],tags:["setup"]},
+      {title:"Read the company docs",notes:"Mission, strategy, current roadmap, team org chart.",priority:"Medium",daysFromStart:1,subtasks:["Mission + values","Strategy doc","Team org"],tags:["context"]},
+      {title:"Shadow the team",notes:"Pair with each teammate for a day. Take notes.",priority:"Medium",daysFromStart:4,subtasks:[],tags:["context"]},
+      {title:"First small task",notes:"A starter task in a real codebase — small enough to ship in a day.",priority:"Medium",daysFromStart:7,subtasks:["Pick task with manager","Ship","Code review"],tags:["shipping"]},
+      {title:"Two-week check-in",notes:"Manager 1:1 to surface blockers early.",priority:"High",daysFromStart:14,subtasks:["What's working","What's blocking","What's confusing"],tags:["check-in"]},
+      {title:"Own a real piece of work",notes:"Take ownership of a small project end-to-end.",priority:"High",daysFromStart:21,subtasks:["Scoped","Stakeholders aligned","Ship plan"],tags:["shipping"]},
+      {title:"30-day retrospective",notes:"Self-assessment + manager feedback.",priority:"High",daysFromStart:30,subtasks:["What went well","Gaps","Goals for next 30 days"],tags:["retro"]}
+    ]},
+  { id:"job-search", name:"Job Search Pipeline", icon:"briefcase.fill", fa:"fa-briefcase", colorHex:"#5E5CE6",
+    summary:"A four-week job hunt from CV polish to signed offer.",
+    detail:"Run your search like a project: refresh your materials, target the right companies, apply, prep for interviews, and negotiate the offer.",
+    category:"Work", tasks:[
+      {title:"Polish your CV / resume",notes:"Update experience and quantify achievements.",priority:"High",daysFromStart:0,subtasks:["Update experience","Quantify achievements","Proofread"],tags:["prep"]},
+      {title:"Refresh online profiles",notes:"Make sure LinkedIn and your portfolio match your CV.",priority:"Medium",daysFromStart:1,subtasks:["LinkedIn headline","Portfolio / site","Privacy check"],tags:["prep"]},
+      {title:"Build a target list",notes:"Pick companies worth pursuing and set up alerts.",priority:"Medium",daysFromStart:2,subtasks:["20 target companies","Key contacts","Job-board alerts"],tags:["research"]},
+      {title:"Tailor and send applications",notes:"Customise each application; track them.",priority:"High",daysFromStart:5,subtasks:["Custom cover letter","Match keywords","Track in a sheet"],tags:["apply"]},
+      {title:"Prepare for interviews",notes:"Research and rehearse your stories.",priority:"High",daysFromStart:12,subtasks:["Research the company","STAR stories","Questions to ask"],tags:["interview"]},
+      {title:"Mock interview",notes:"Run a practice round with a friend or mentor.",priority:"Medium",daysFromStart:14,subtasks:["Behavioural round","Role / technical round"],tags:["interview"]},
+      {title:"Follow up & negotiate",notes:"Send thank-yous and research your market rate.",priority:"Medium",daysFromStart:21,subtasks:["Thank-you notes","Salary research","Plan a counter"],tags:["offer"]},
+      {title:"Decide & prep to start",notes:"Compare offers and exit gracefully.",priority:"High",daysFromStart:30,subtasks:["Compare offers","Accept","Resign gracefully"],tags:["offer"]}
+    ]},
+  { id:"content-calendar", name:"Content Calendar", icon:"square.and.pencil", fa:"fa-pen-nib", colorHex:"#AF52DE",
+    summary:"A month of content from theme to analytics.",
+    detail:"Plan, produce, publish, and review a month of content across your channels — repeatable every month.",
+    category:"Work", tasks:[
+      {title:"Set theme & goals",notes:"Decide the month's angle and what success looks like.",priority:"High",daysFromStart:0,subtasks:["Monthly theme","KPIs","Channels"],tags:["planning"]},
+      {title:"Brainstorm topics",notes:"Generate ideas and pick the strongest.",priority:"Medium",daysFromStart:1,subtasks:["Idea list","Pick top 8","Keyword check"],tags:["ideas"]},
+      {title:"Write content briefs",notes:"Outline each piece and assign owners.",priority:"Medium",daysFromStart:3,subtasks:["Outline each","Assign owners","Set due dates"],tags:["planning"]},
+      {title:"Produce the pieces",notes:"Draft, design, and review before scheduling.",priority:"High",daysFromStart:7,subtasks:["Draft copy","Design assets","Review"],tags:["production"]},
+      {title:"Schedule & publish",notes:"Queue everything with captions and tags.",priority:"Medium",daysFromStart:12,subtasks:["Queue posts","Captions & tags","Cross-post"],tags:["publish"]},
+      {title:"Engage with the audience",notes:"Reply and reshare to build momentum.",priority:"Low",daysFromStart:14,subtasks:["Reply to comments","Reshare","Track mentions"],tags:["community"]},
+      {title:"Review analytics",notes:"See what worked and capture notes for next month.",priority:"Medium",daysFromStart:28,subtasks:["Top performers","Reach & engagement","Notes for next month"],tags:["review"]}
+    ]},
+  { id:"quarterly-business-review", name:"Quarterly Business Review", icon:"chart.line.uptrend.xyaxis", fa:"fa-chart-line", colorHex:"#30D158",
+    summary:"Prepare and deliver a sharp QBR in two weeks.",
+    detail:"Pull the numbers, find the story, build the deck, set next quarter's goals, and present with confidence.",
+    category:"Work", tasks:[
+      {title:"Pull the quarter's metrics",notes:"Gather the numbers from every source.",priority:"High",daysFromStart:0,subtasks:["Revenue / KPIs","Pipeline","Costs"],tags:["data"]},
+      {title:"Analyse wins & misses",notes:"Compare to targets and find root causes.",priority:"High",daysFromStart:3,subtasks:["Vs targets","Root causes","Trends"],tags:["analysis"]},
+      {title:"Gather team input",notes:"Collect each lead's summary and asks.",priority:"Medium",daysFromStart:5,subtasks:["Lead summaries","Blockers","Asks"],tags:["input"]},
+      {title:"Build the deck",notes:"Tell a clear narrative backed by charts.",priority:"High",daysFromStart:8,subtasks:["Narrative","Charts","Appendix"],tags:["deck"]},
+      {title:"Set next-quarter goals",notes:"Define OKRs with owners and budget.",priority:"High",daysFromStart:10,subtasks:["OKRs","Owners","Budget"],tags:["planning"]},
+      {title:"Dry run",notes:"Rehearse, time it, and anticipate questions.",priority:"Medium",daysFromStart:12,subtasks:["Time it","Anticipate questions","Polish"],tags:["rehearsal"]},
+      {title:"Present the QBR",notes:"Deliver it and capture decisions live.",priority:"High",daysFromStart:14,subtasks:["Present","Capture decisions"],tags:["present"]},
+      {title:"Circulate notes & actions",notes:"Send action items with owners and deadlines.",priority:"Medium",daysFromStart:16,subtasks:["Actions + owners","Deadlines","Follow-up date"],tags:["follow-up"]}
+    ]},
+  { id:"home-renovation", name:"Home Renovation", icon:"wrench.and.screwdriver.fill", fa:"fa-screwdriver-wrench", colorHex:"#FF9F0A",
+    summary:"A two-month renovation from scope to final walkthrough.",
+    detail:"Plan the work, hire the right contractor, choose finishes, and keep the build on track through to sign-off.",
+    category:"Life", tasks:[
+      {title:"Define scope & budget",notes:"Decide what you're doing and what you'll spend.",priority:"High",daysFromStart:0,subtasks:["Must-haves vs nice-to-haves","Budget + 15% buffer","Inspiration board"],tags:["planning"]},
+      {title:"Get contractor quotes",notes:"Shortlist, visit, and compare.",priority:"High",daysFromStart:7,subtasks:["Shortlist 3","Site visits","Compare quotes"],tags:["contractor"]},
+      {title:"Choose materials & finishes",notes:"Lock in the look before work starts.",priority:"Medium",daysFromStart:14,subtasks:["Flooring","Paint colours","Fixtures"],tags:["materials"]},
+      {title:"Sign contract & schedule",notes:"Agree payment schedule and pull permits.",priority:"High",daysFromStart:21,subtasks:["Payment schedule","Start date","Permits"],tags:["contractor"]},
+      {title:"Demolition & prep",notes:"Clear and protect the space.",priority:"Medium",daysFromStart:28,subtasks:["Clear the space","Protect adjacent rooms"],tags:["build"]},
+      {title:"Build & install",notes:"Keep weekly check-ins and track changes.",priority:"High",daysFromStart:35,subtasks:["Weekly check-ins","Track changes / costs"],tags:["build"]},
+      {title:"Inspection & snag list",notes:"Walk every room and list defects.",priority:"Medium",daysFromStart:55,subtasks:["Walk each room","List defects","Agree fixes"],tags:["review"]},
+      {title:"Final walkthrough & payment",notes:"Confirm fixes, pay, and file the paperwork.",priority:"High",daysFromStart:60,subtasks:["Confirm fixes done","Final payment","Warranty docs"],tags:["review"]}
+    ]},
+  { id:"fitness-kickstart", name:"Fitness Kickstart", icon:"figure.run", fa:"fa-dumbbell", colorHex:"#FF453A",
+    summary:"An eight-week plan to build the habit and see results.",
+    detail:"Set a baseline, build a routine, fuel it from the kitchen, ramp intensity, and review your progress at eight weeks.",
+    category:"Life", tasks:[
+      {title:"Set goals & baseline",notes:"Capture where you're starting from.",priority:"High",daysFromStart:0,subtasks:["Measurements","Photos","Target"],tags:["setup"]},
+      {title:"Plan your workout schedule",notes:"Decide days, split, and a home backup.",priority:"Medium",daysFromStart:1,subtasks:["Days per week","Training split","Backup home plan"],tags:["setup"]},
+      {title:"Stock a healthy kitchen",notes:"Make the easy choice the default.",priority:"Medium",daysFromStart:2,subtasks:["Grocery list","Meal prep","Water goal"],tags:["nutrition"]},
+      {title:"Weeks 1–2: build the habit",notes:"Just show up — form over weight.",priority:"High",daysFromStart:3,subtasks:["Show up daily","Form over weight","Sleep 7h+"],tags:["training"]},
+      {title:"Mid-point check-in",notes:"Re-measure and adjust the plan.",priority:"Medium",daysFromStart:28,subtasks:["Re-measure","Adjust plan","Celebrate wins"],tags:["review"]},
+      {title:"Weeks 5–6: increase intensity",notes:"Add load and conditioning.",priority:"Medium",daysFromStart:30,subtasks:["Add load","Add cardio","Track lifts"],tags:["training"]},
+      {title:"Progress photos & measure",notes:"Same poses, compare honestly.",priority:"Low",daysFromStart:49,subtasks:["Same poses","Compare","Note changes"],tags:["review"]},
+      {title:"8-week review & next block",notes:"See results and plan what's next.",priority:"High",daysFromStart:56,subtasks:["Results vs goal","What worked","Plan next 8 weeks"],tags:["review"]}
+    ]},
+  { id:"tax-season-prep", name:"Tax Season Prep", icon:"doc.text.fill", fa:"fa-file-invoice-dollar", colorHex:"#64D2FF",
+    summary:"Gather, organise, and file without the last-minute panic.",
+    detail:"Pull every document together, capture your deductions, file early, and set yourself up for an easier next year.",
+    category:"Life", tasks:[
+      {title:"Gather income documents",notes:"Collect everything that reports income.",priority:"High",daysFromStart:0,subtasks:["W-2 / P60 / payslips","1099s / dividends","Interest statements"],tags:["documents"]},
+      {title:"Collect receipts & deductions",notes:"Round up anything deductible.",priority:"High",daysFromStart:5,subtasks:["Charitable","Medical","Work expenses"],tags:["deductions"]},
+      {title:"Organise by category",notes:"Sort into folders and total each.",priority:"Medium",daysFromStart:10,subtasks:["Digital folders","Totals per category"],tags:["organise"]},
+      {title:"Review last year's return",notes:"Catch carryovers and missed items.",priority:"Medium",daysFromStart:12,subtasks:["Carryovers","Missed deductions"],tags:["review"]},
+      {title:"Complete the return",notes:"Enter figures and double-check.",priority:"High",daysFromStart:20,subtasks:["Enter figures","Double-check","Accuracy review"],tags:["filing"]},
+      {title:"File & settle up",notes:"Submit and save your confirmation.",priority:"High",daysFromStart:25,subtasks:["Submit","Save confirmation","Set up payment / refund"],tags:["filing"]},
+      {title:"Plan for next year",notes:"Make next year's prep painless.",priority:"Low",daysFromStart:30,subtasks:["Adjust withholding","Start a receipts folder"],tags:["planning"]}
+    ]},
+  { id:"trip-planning", name:"Trip Planning", icon:"airplane", fa:"fa-plane", colorHex:"#0A84FF",
+    summary:"Plan a trip end to end — set the start date to your departure day.",
+    detail:"Everything from booking to the post-trip wrap-up, counted back from your departure day (day 0). Negative days happen before you leave.",
+    category:"Events", tasks:[
+      {title:"Set dates & budget",notes:"Lock the basics before booking anything.",priority:"High",daysFromStart:-45,subtasks:["Travel dates","Total budget","Who's going"],tags:["planning"]},
+      {title:"Book flights",notes:"Compare fares and confirm seats.",priority:"High",daysFromStart:-40,subtasks:["Compare fares","Seats","Confirmation"],tags:["booking"]},
+      {title:"Book accommodation",notes:"Research the area and reserve.",priority:"High",daysFromStart:-35,subtasks:["Location research","Check reviews","Reserve"],tags:["booking"]},
+      {title:"Plan the itinerary",notes:"Map out the days and pre-book the essentials.",priority:"Medium",daysFromStart:-21,subtasks:["Must-see list","Day-by-day","Reservations"],tags:["itinerary"]},
+      {title:"Sort documents & money",notes:"Passports, insurance, and currency sorted.",priority:"High",daysFromStart:-14,subtasks:["Passport / visa","Travel insurance","Currency / cards"],tags:["admin"]},
+      {title:"Pre-trip checklist",notes:"Tie up loose ends at home.",priority:"Medium",daysFromStart:-3,subtasks:["Hold mail","Charge devices","Offline maps"],tags:["admin"]},
+      {title:"Pack",notes:"Pack light, forget nothing.",priority:"Medium",daysFromStart:-2,subtasks:["Clothes","Toiletries","Chargers & adapters"],tags:["packing"]},
+      {title:"Departure day",notes:"Get there early and relax.",priority:"High",daysFromStart:0,subtasks:["Check in online","Arrive early","Tickets ready"],tags:["travel"]},
+      {title:"Post-trip wrap-up",notes:"Close the loop when you're back.",priority:"Low",daysFromStart:10,subtasks:["Log expenses","Back up photos","Reviews / thank-yous"],tags:["wrap-up"]}
+    ]},
+  { id:"birthday-party", name:"Birthday Party", icon:"birthday.cake.fill", fa:"fa-cake-candles", colorHex:"#FF2D55",
+    summary:"Throw a great party — set the start date to the party day.",
+    detail:"Counted back from the party (day 0): guest list, theme, invites, cake, decorations, and the day itself.",
+    category:"Events", tasks:[
+      {title:"Set budget & guest list",notes:"Decide scale before anything else.",priority:"High",daysFromStart:-21,subtasks:["Headcount","Budget","Confirm the date"],tags:["planning"]},
+      {title:"Pick theme & venue",notes:"Choose a vibe and a place.",priority:"Medium",daysFromStart:-18,subtasks:["Theme","Book the space","Backup plan"],tags:["planning"]},
+      {title:"Send invitations",notes:"Get them out with an RSVP tracker.",priority:"High",daysFromStart:-14,subtasks:["Design","Send","RSVP tracker"],tags:["guests"]},
+      {title:"Order cake & food",notes:"Sort catering and any dietary needs.",priority:"High",daysFromStart:-7,subtasks:["Cake","Catering / menu","Dietary needs"],tags:["catering"]},
+      {title:"Buy decorations & supplies",notes:"Decor, tableware, and favours.",priority:"Medium",daysFromStart:-3,subtasks:["Decor","Tableware","Party favours"],tags:["supplies"]},
+      {title:"Confirm RSVPs & details",notes:"Final numbers and a playlist.",priority:"Medium",daysFromStart:-2,subtasks:["Final headcount","Confirm vendors","Playlist"],tags:["guests"]},
+      {title:"Set up & host",notes:"Decorate, welcome everyone, enjoy it.",priority:"High",daysFromStart:0,subtasks:["Decorate","Welcome guests","Cake moment"],tags:["party"]},
+      {title:"Thank-you notes",notes:"Share photos and say thanks.",priority:"Low",daysFromStart:2,subtasks:["Share photos","Send notes"],tags:["wrap-up"]}
+    ]},
+  { id:"learn-a-language", name:"Learn a Language", icon:"character.bubble.fill", fa:"fa-language", colorHex:"#BF5AF2",
+    summary:"A 90-day plan from first words to a real conversation.",
+    detail:"Build a daily habit, learn core vocabulary and grammar, start speaking early, then immerse — with checkpoints at 45 and 90 days.",
+    category:"Learning", tasks:[
+      {title:"Choose language & resources",notes:"Pick your tools and your reason why.",priority:"High",daysFromStart:0,subtasks:["Pick an app","Grammar reference","Define your why"],tags:["setup"]},
+      {title:"Build a daily routine",notes:"Small and consistent beats big and rare.",priority:"High",daysFromStart:1,subtasks:["20 min/day slot","Streak tracker","Flashcards"],tags:["habit"]},
+      {title:"Master the first 100 words",notes:"The words you'll actually use most.",priority:"Medium",daysFromStart:7,subtasks:["Core nouns","Common verbs","Everyday phrases"],tags:["vocab"]},
+      {title:"Grammar foundations",notes:"Enough structure to form sentences.",priority:"Medium",daysFromStart:21,subtasks:["Present tense","Questions","Negation"],tags:["grammar"]},
+      {title:"First conversation",notes:"Speak early, even badly.",priority:"High",daysFromStart:30,subtasks:["Find a partner / tutor","10-minute chat","Note the gaps"],tags:["speaking"]},
+      {title:"Mid-point assessment",notes:"Check progress and adjust.",priority:"Medium",daysFromStart:45,subtasks:["Self-test","Adjust the plan"],tags:["review"]},
+      {title:"Immerse",notes:"Surround yourself with the language.",priority:"Medium",daysFromStart:60,subtasks:["Podcasts","Subtitled shows","Music"],tags:["immersion"]},
+      {title:"90-day fluency check",notes:"Compare to day one and set the next goal.",priority:"High",daysFromStart:90,subtasks:["15-minute conversation","Compare to day 1","Set next goal"],tags:["review"]}
+    ]},
+  { id:"book-club", name:"Book Club", icon:"books.vertical.fill", fa:"fa-book-open", colorHex:"#5AC8FA",
+    summary:"Run a month-long book club from pick to next pick.",
+    detail:"Choose the book, share a reading schedule, meet at the midpoint and the end, and line up the next read.",
+    category:"Learning", tasks:[
+      {title:"Pick the book & schedule",notes:"Agree on the read and the dates.",priority:"High",daysFromStart:0,subtasks:["Shortlist","Vote","Set meeting date"],tags:["planning"]},
+      {title:"Share the reading plan",notes:"Set the pace and a place to chat.",priority:"Medium",daysFromStart:1,subtasks:["Chapters per week","Group chat","Calendar invite"],tags:["planning"]},
+      {title:"Read Part 1",notes:"Read and jot notes as you go.",priority:"Medium",daysFromStart:10,subtasks:["Notes & quotes","Questions"],tags:["reading"]},
+      {title:"Prep discussion questions",notes:"A few prompts to get talking.",priority:"Low",daysFromStart:12,subtasks:["Themes","Favourite passages"],tags:["discussion"]},
+      {title:"Mid-book meetup",notes:"Gather and discuss the first half.",priority:"Medium",daysFromStart:14,subtasks:["Host / venue","Snacks","Discuss"],tags:["meetup"]},
+      {title:"Finish the book",notes:"Read to the end with final thoughts.",priority:"Medium",daysFromStart:24,subtasks:["Final chapters","Overall thoughts"],tags:["reading"]},
+      {title:"Final discussion",notes:"Rate it and recommend (or not).",priority:"High",daysFromStart:28,subtasks:["Rate it","Best / worst","Recommend?"],tags:["discussion"]},
+      {title:"Choose the next book",notes:"Keep the momentum going.",priority:"Low",daysFromStart:30,subtasks:["Nominations","Vote","Set next date"],tags:["planning"]}
+    ]},
+  { id:"employee-directory", name:"Employee Directory", icon:"person.text.rectangle.fill", fa:"fa-id-card-clip", colorHex:"#5856D6",
+    summary:"Firm-wide register — one task per employee, subtasks track what's on file.",
+    detail:"The master register for everyone in the firm. Each task represents one employee: name in the title, role and contact details in the notes, document-on-file status as subtasks, department as a tag. Add a new task whenever someone joins; archive when they leave. Six placeholder rows ship as a structure — overwrite with your real team on first use.",
+    category:"Work", tasks:[
+      {title:"Set up the directory",notes:"Decide what you'll track on each person (fields), and your tag taxonomy (department, location, employment type). Each later task is one employee.",priority:"High",daysFromStart:0,subtasks:["Confirm fields per person","Define department tags","Define location tags","Lock the format"],tags:["setup"]},
+      {title:"Employee — Alex Morgan",notes:"Role: Engineering Manager · Email: alex@example.com · Phone: ··· · Started: 2024-03-15",priority:"Medium",daysFromStart:0,subtasks:["Signed contract on file","Tax forms submitted","Equipment issued","Emergency contact recorded","Right-to-work verified"],tags:["engineering","permanent"]},
+      {title:"Employee — Jordan Lee",notes:"Role: Senior Designer · Email: jordan@example.com · Phone: ··· · Started: 2023-09-01",priority:"Medium",daysFromStart:0,subtasks:["Signed contract on file","Tax forms submitted","Equipment issued","Emergency contact recorded","Right-to-work verified"],tags:["design","permanent"]},
+      {title:"Employee — Sam Patel",notes:"Role: Product Manager · Email: sam@example.com · Phone: ··· · Started: 2025-01-12",priority:"Medium",daysFromStart:0,subtasks:["Signed contract on file","Tax forms submitted","Equipment issued","Emergency contact recorded","Right-to-work verified"],tags:["product","permanent"]},
+      {title:"Employee — Riley Chen",notes:"Role: Customer Success Lead · Email: riley@example.com · Phone: ··· · Started: 2024-08-20",priority:"Medium",daysFromStart:0,subtasks:["Signed contract on file","Tax forms submitted","Equipment issued","Emergency contact recorded","Right-to-work verified"],tags:["success","permanent"]},
+      {title:"Employee — Casey Rivera",notes:"Role: Marketing Associate · Email: casey@example.com · Phone: ··· · Started: 2025-03-03",priority:"Medium",daysFromStart:0,subtasks:["Signed contract on file","Tax forms submitted","Equipment issued","Emergency contact recorded","Right-to-work verified"],tags:["marketing","permanent"]},
+      {title:"Employee — Avery Kim",notes:"Role: Finance Analyst · Email: avery@example.com · Phone: ··· · Started: 2024-11-04",priority:"Medium",daysFromStart:0,subtasks:["Signed contract on file","Tax forms submitted","Equipment issued","Emergency contact recorded","Right-to-work verified"],tags:["finance","permanent"]},
+      {title:"Quarterly audit",notes:"Walk the register every quarter — joiners added, leavers archived, missing fields filled.",priority:"Low",daysFromStart:90,subtasks:["Add new joiners","Archive leavers","Fill any missing fields"],tags:["audit"]}
+    ]},
+  { id:"holiday-tracker", name:"Holiday Tracker", icon:"sun.max.fill", fa:"fa-umbrella-beach", colorHex:"#FF9500",
+    summary:"Lean leave register — one task per planned holiday, status in the subtasks.",
+    detail:"Deliberately sparse: a register, not a workflow. One task per planned leave (annual, sick, parental, etc.) with dates and approver in the notes, status as subtasks. Bank-holiday seed entries land at typical offsets — edit for your jurisdiction.",
+    category:"Work", tasks:[
+      {title:"Set the year's leave policy",notes:"Annual allowance, accrual rules, blackout dates, carry-over rules.",priority:"High",daysFromStart:0,subtasks:["Allowance per role","Carry-over rule","Blackout windows"],tags:["policy"]},
+      {title:"Bank holiday — Spring",notes:"Office closed.",priority:"Low",daysFromStart:120,subtasks:["Calendar blocked"],tags:["bank-holiday"]},
+      {title:"Bank holiday — Summer",notes:"Office closed.",priority:"Low",daysFromStart:210,subtasks:["Calendar blocked"],tags:["bank-holiday"]},
+      {title:"Leave — Alex Morgan · 5 days",notes:"Annual leave · 5 working days · Cover: Jordan Lee · Approved by manager.",priority:"Medium",daysFromStart:60,subtasks:["Request submitted","Approved","Calendar blocked","Cover arranged","Out-of-office set"],tags:["annual-leave"]},
+      {title:"Leave — Sam Patel · 10 days",notes:"Parental leave · 2-week block · Cover: shared across team · Approved.",priority:"High",daysFromStart:140,subtasks:["Request submitted","Approved","Calendar blocked","Cover arranged","Return briefing scheduled"],tags:["parental-leave"]},
+      {title:"Leave — Jordan Lee · 3 days",notes:"Annual leave · year-end break · Cover not required (low workload).",priority:"Low",daysFromStart:250,subtasks:["Request submitted","Approved","Calendar blocked"],tags:["annual-leave"]},
+      {title:"Year-end allowance check",notes:"Audit balances. Flag anyone with unused leave at risk of expiry.",priority:"Medium",daysFromStart:300,subtasks:["Balances per person","Carry-over decisions","Notify affected"],tags:["audit"]}
+    ]},
+  { id:"performance-review-cycle", name:"Performance Review Cycle", icon:"chart.line.uptrend.xyaxis", fa:"fa-chart-line", colorHex:"#34C759",
+    summary:"Quarter-long performance review cadence from self-assessment to action plan.",
+    detail:"A complete review cycle for a single direct report: self-assessment, peer feedback, the review conversation itself, calibration, and a 90-day action plan. Set the start date to your prep week and the conversation lands at week 4.",
+    category:"Work", tasks:[
+      {title:"Schedule the review window",notes:"Block calendars for self-assessment, peer feedback and the conversation itself.",priority:"High",daysFromStart:0,subtasks:["Send self-assessment form","Send peer feedback requests","Book conversation slot"],tags:["scheduling"]},
+      {title:"Share self-assessment form",notes:"Hand the report a structured prompt: wins, gaps, growth areas, asks.",priority:"Medium",daysFromStart:1,subtasks:["Pick template","Share with deadline"],tags:["self-assessment"]},
+      {title:"Collect peer feedback",notes:"Reach out to 3–5 cross-functional partners for written feedback.",priority:"High",daysFromStart:3,subtasks:["List peers","Send requests","Chase missing responses"],tags:["360-feedback"]},
+      {title:"Read & synthesise feedback",notes:"Look for patterns across self + peers. Surface the surprises.",priority:"High",daysFromStart:10,subtasks:["Highlight themes","Note contradictions","Draft talking points"],tags:["prep"]},
+      {title:"Draft the review",notes:"Strengths, growth areas, evidence. Calibrate against the level expectations.",priority:"High",daysFromStart:14,subtasks:["Strengths with examples","Growth areas with examples","Level calibration"],tags:["writing"]},
+      {title:"Calibration check",notes:"Run the draft past your manager or HR partner before delivery.",priority:"Medium",daysFromStart:18,subtasks:["Share draft","Address pushback","Lock final"],tags:["calibration"]},
+      {title:"Review conversation",notes:"The 1:1 itself. Keep it dialogue, not monologue.",priority:"High",daysFromStart:21,subtasks:["Open with their self-assessment","Walk through review","Listen for reaction","Agree next steps"],tags:["conversation"]},
+      {title:"Write the action plan",notes:"3–5 specific, measurable goals for the next quarter.",priority:"High",daysFromStart:23,subtasks:["Goals","Owners","Check-in cadence"],tags:["action-plan"]},
+      {title:"30-day check-in",notes:"First pulse on the action plan — early enough to course-correct.",priority:"Medium",daysFromStart:53,subtasks:["Progress vs goals","Blockers","Adjustments"],tags:["check-in"]}
+    ]},
+  { id:"weekly-meal-plan", name:"Weekly Meal Plan", icon:"fork.knife", fa:"fa-utensils", colorHex:"#FF9500",
+    summary:"Sunday plan, weekday cook — seven dinners with a single shop and a clear prep schedule.",
+    detail:"Plan the week's dinners on Sunday, hit the shop once, then knock out one recipe per evening. Subtasks on each cooking day list the actual steps so you can use the task as the recipe card.",
+    category:"Life", tasks:[
+      {title:"Plan the menu",notes:"Pick seven dinners that share ingredients where possible.",priority:"High",daysFromStart:0,subtasks:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],tags:["planning"]},
+      {title:"Build the shopping list",notes:"One pass — produce, protein, pantry, fresh.",priority:"High",daysFromStart:0,subtasks:["Produce","Protein","Pantry","Fresh / dairy","Frozen"],tags:["shopping"]},
+      {title:"Grocery run",notes:"One trip. Stick to the list.",priority:"High",daysFromStart:0,subtasks:[],tags:["shopping"]},
+      {title:"Sunday prep",notes:"Wash & chop what you can. Cook grains in bulk.",priority:"Medium",daysFromStart:0,subtasks:["Wash produce","Chop aromatics","Cook grains / pulses","Portion proteins"],tags:["prep"]},
+      {title:"Monday — sheet-pan dinner",notes:"Roast protein + veg on one tray. 25 min in the oven.",priority:"Medium",daysFromStart:1,subtasks:["Preheat 200°C","Toss with oil + spice","Roast 25 min","Plate with grain"],tags:["cooking"]},
+      {title:"Tuesday — one-pot pasta",notes:"Everything in the pot. 15 min start to plate.",priority:"Medium",daysFromStart:2,subtasks:["Sauté aromatics","Add pasta + liquid","Simmer 12 min","Finish with cheese / herbs"],tags:["cooking"]},
+      {title:"Wednesday — stir-fry",notes:"High heat. Cook in batches. Sauce at the end.",priority:"Medium",daysFromStart:3,subtasks:["Prep all before heating pan","Cook protein","Cook veg","Combine + sauce"],tags:["cooking"]},
+      {title:"Thursday — soup or stew",notes:"Use the slowest weeknight for the most forgiving recipe.",priority:"Medium",daysFromStart:4,subtasks:["Brown aromatics","Add liquid + main","Simmer","Finish with acid + herbs"],tags:["cooking"]},
+      {title:"Friday — takeaway-style at home",notes:"Tacos, bowls, or wraps. Lay everything out, assemble at the table.",priority:"Low",daysFromStart:5,subtasks:["Warm shells / bread","Prep toppings","Cook protein","Serve build-your-own"],tags:["cooking"]},
+      {title:"Saturday — leftovers remix",notes:"Turn the week's leftovers into something new (fried rice, frittata, grain bowl).",priority:"Low",daysFromStart:6,subtasks:["Audit fridge","Pick a base","Add veg + protein","Top with egg / cheese"],tags:["cooking","leftovers"]},
+      {title:"Sunday — slow cook",notes:"Roast, braise or slow-cook for tomorrow's lunch too.",priority:"Medium",daysFromStart:7,subtasks:["Sear","Add aromatics + liquid","Slow cook 2–4h","Portion for lunches"],tags:["cooking","batch"]}
+    ]},
+  { id:"dinner-party-menu", name:"Dinner Party Menu", icon:"wineglass.fill", fa:"fa-wine-glass", colorHex:"#FF2D55",
+    summary:"Three-week plan for a hosted dinner: menu lock, shop, prep, plate.",
+    detail:"From menu lock to clearing the table. Each task sits where it belongs in the timeline so the day-of you're calm and the food is good. Designed for 6–8 guests, three courses.",
+    category:"Events", tasks:[
+      {title:"Lock the date and guest list",notes:"Confirm 6–8 guests. Note any allergies or strong dislikes.",priority:"High",daysFromStart:0,subtasks:["Send save-the-date","Collect dietary needs","Confirm headcount"],tags:["planning"]},
+      {title:"Design the menu",notes:"Three courses that overlap on technique so you're not cooking five things at once.",priority:"High",daysFromStart:2,subtasks:["Starter","Main","Side(s)","Dessert","Drinks pairing"],tags:["menu"]},
+      {title:"Trial-cook the main",notes:"Cook the main once before the party. Adjust seasoning and timing now, not on the night.",priority:"Medium",daysFromStart:7,subtasks:["Shop trial portion","Cook","Note adjustments"],tags:["prep"]},
+      {title:"Big shop",notes:"All non-perishables and pantry. Leave fresh herbs and bread for the day before.",priority:"High",daysFromStart:14,subtasks:["Produce","Protein","Pantry","Wine / drinks","Flowers / candles"],tags:["shopping"]},
+      {title:"Set the table",notes:"Lay everything the day before — one less thing on the day.",priority:"Medium",daysFromStart:20,subtasks:["Linens","Plates & cutlery","Glasses","Candles","Place cards (optional)"],tags:["setup"]},
+      {title:"Day-before prep",notes:"Make anything that holds — stocks, sauces, dressings, dessert.",priority:"High",daysFromStart:20,subtasks:["Stocks / sauces","Dressings","Dessert","Pre-portion ingredients"],tags:["prep"]},
+      {title:"Day-of cook schedule",notes:"Reverse-engineer from serve time. Pin this on the fridge.",priority:"High",daysFromStart:21,subtasks:["T-4h: start braise","T-2h: par-cook sides","T-1h: shower & change","T-30: warm bread, plate starter","T-0: serve"],tags:["cooking"]},
+      {title:"Plate the starter",notes:"Plate as guests sit. Simple and pretty beats elaborate and cold.",priority:"High",daysFromStart:21,subtasks:[],tags:["service"]},
+      {title:"Serve the main",notes:"Rest meat 10 min before slicing. Carry plates two at a time.",priority:"High",daysFromStart:21,subtasks:["Rest protein","Plate","Serve"],tags:["service"]},
+      {title:"Dessert and coffee",notes:"Slow it down. This is the conversation course.",priority:"Medium",daysFromStart:21,subtasks:["Plate dessert","Brew coffee / tea"],tags:["service"]},
+      {title:"Next-day notes",notes:"What worked, what didn't, what you'd serve again. Future-you will thank you.",priority:"Low",daysFromStart:22,subtasks:["Hits","Misses","Re-cook list"],tags:["retro"]}
+    ]}
+];
+
+let tplCategory = null;
+
+function tplPayload(t) {
+  return { id:t.id, name:t.name, icon:t.icon, colorHex:t.colorHex, summary:t.summary, detail:t.detail, category:t.category, tasks:t.tasks };
+}
+function tplInstallURL(t) {
+  return "workflowapp://install-template?json=" + encodeURIComponent(JSON.stringify(tplPayload(t)));
+}
+function tplEsc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+
+/* ---------- Domain Packs ---------- */
+// Each pack references templates by id. The install link bundles the resolved
+// payloads so the recipient app does not have to re-fetch anything.
+const PACKS = [
+  {
+    id: "developer-essentials",
+    name: "Developer Essentials",
+    icon: "hammer.fill", fa: "fa-hammer", colorHex: "#5856D6",
+    summary: "Run sprints and onboard new engineers — two projects, one tap.",
+    detail: "The starter kit for an engineering team: a two-week sprint cadence and a 30-day new-hire onboarding plan. Install once, get both projects with their full task lists.",
+    templateIDs: ["software-sprint", "new-hire-onboarding"]
+  },
+  {
+    id: "hr-toolkit",
+    name: "HR Toolkit",
+    icon: "person.2.fill", fa: "fa-people-group", colorHex: "#00C7BE",
+    summary: "Onboard new hires, keep the firm directory, track who's on leave.",
+    detail: "Three HR-facing playbooks: the 30-day new-hire onboarding plan, a firm-wide employee directory with documents-on-file tracking, and a sparse holiday register. Install once and the whole HR ops layer is in place.",
+    templateIDs: ["new-hire-onboarding", "employee-directory", "holiday-tracker"]
+  },
+  {
+    id: "launch-and-growth",
+    name: "Launch & Growth",
+    icon: "paperplane.fill", fa: "fa-paper-plane", colorHex: "#007AFF",
+    summary: "Engineering sprint plus marketing launch — ship and announce in one workflow.",
+    detail: "The full go-to-market pairing: the engineering sprint that builds the feature and the six-week marketing launch that takes it to customers. Best installed when a launch date is locked.",
+    templateIDs: ["software-sprint", "product-launch"]
+  },
+  {
+    id: "employee-record",
+    name: "Employee Record",
+    icon: "person.text.rectangle.fill", fa: "fa-id-card-clip", colorHex: "#34C759",
+    summary: "Manage one direct report end-to-end — onboarding through quarterly reviews.",
+    detail: "Everything a manager needs to keep an employee's record in one place: the 30-day onboarding plan they joined with, plus a recurring performance-review cycle you can run every quarter. Pair this pack per person.",
+    templateIDs: ["new-hire-onboarding", "performance-review-cycle"]
+  },
+  {
+    id: "family-kitchen",
+    name: "Family Kitchen",
+    icon: "fork.knife", fa: "fa-utensils", colorHex: "#FF9500",
+    summary: "Weekly meals plus the occasional dinner party — kitchen run like a project.",
+    detail: "The weekly meal plan keeps midweek dinners on rails; the dinner-party menu kicks in when you're hosting. Install both and the cooking part of your life has a structure.",
+    templateIDs: ["weekly-meal-plan", "dinner-party-menu"]
+  }
+];
+
+function pkResolveTemplates(p) {
+  return p.templateIDs.map(id => TEMPLATES.find(t => t.id === id)).filter(Boolean);
+}
+function pkPayload(p) {
+  const projects = pkResolveTemplates(p).map(tplPayload);
+  return { id:p.id, name:p.name, icon:p.icon, colorHex:p.colorHex, summary:p.summary, detail:p.detail, version:1, projects };
+}
+function pkInstallURL(p) {
+  return "workflowapp://install-pack?json=" + encodeURIComponent(JSON.stringify(pkPayload(p)));
+}
+function pkTotalTasks(p) {
+  return pkResolveTemplates(p).reduce((n, t) => n + t.tasks.length, 0);
+}
+
+function tplRenderChips() {
+  const root = document.getElementById('tplChips');
+  if (!root) return;
+  const make = (label, value) => {
+    const b = document.createElement('button');
+    b.className = 'tpl-chip'; b.type = 'button'; b.textContent = label;
+    b.setAttribute('aria-pressed', tplCategory === value ? 'true' : 'false');
+    b.addEventListener('click', () => { tplCategory = (tplCategory === value ? null : value); if (value === null) tplCategory = null; tplRender(); });
+    return b;
+  };
+  root.innerHTML = '';
+  const all = make('All', '__all__');
+  all.setAttribute('aria-pressed', tplCategory === null ? 'true' : 'false');
+  all.addEventListener('click', () => { tplCategory = null; tplRender(); });
+  root.appendChild(all);
+  TPL_CATEGORIES.forEach(c => root.appendChild(make(c, c)));
+}
+
+function tplRender() {
+  tplRenderChips();
+  const grid = document.getElementById('tplGrid');
+  if (!grid) return;
+  const list = TEMPLATES.filter(t => !tplCategory || t.category === tplCategory);
+  grid.innerHTML = list.map(t => `
+    <article class="tpl-card">
+      <div class="tpl-head">
+        <span class="tpl-icon" style="background:linear-gradient(135deg, ${t.colorHex}, ${t.colorHex}bb)"><i class="fa-solid ${t.fa}"></i></span>
+        <div>
+          <div class="tpl-name">${tplEsc(t.name)}</div>
+          <div class="tpl-meta">${t.tasks.length} tasks · ${t.category}</div>
+        </div>
+      </div>
+      <p class="tpl-desc">${tplEsc(t.summary)}</p>
+      <div class="tpl-actions">
+        <a class="tpl-install" href="${tplInstallURL(t)}" target="_top" rel="noopener"><i class="fa-solid fa-download"></i> Install</a>
+        <button class="tpl-view" type="button" data-view-tpl="${t.id}"><i class="fa-solid fa-eye"></i> View contents</button>
+        <button class="tpl-copy" type="button" data-tpl="${t.id}"><i class="fa-solid fa-link"></i> Copy link</button>
+      </div>
+    </article>`).join('');
+  grid.querySelectorAll('button[data-tpl]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = TEMPLATES.find(x => x.id === btn.getAttribute('data-tpl'));
+      if (!t) return;
+      const link = tplInstallURL(t);
+      const done = () => tplToast('Install link copied — open it on a device with WorkFlow');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(done, () => tplFallbackCopy(link, done));
+      } else { tplFallbackCopy(link, done); }
+    });
+  });
+  grid.querySelectorAll('button[data-view-tpl]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = TEMPLATES.find(x => x.id === btn.getAttribute('data-view-tpl'));
+      if (t) openTemplateContentModal(t);
+    });
+  });
+}
+
+/* ---------- Domain Packs render ---------- */
+function pkRender() {
+  const grid = document.getElementById('pkGrid');
+  if (!grid) return;
+  grid.innerHTML = PACKS.map(p => {
+    const children = pkResolveTemplates(p);
+    return `
+    <article class="pk-card">
+      <div class="pk-head">
+        <span class="pk-icon" style="background:linear-gradient(135deg, ${p.colorHex}, ${p.colorHex}bb)">
+          <i class="fa-solid ${p.fa}"></i>
+          <span class="pk-count">${children.length}</span>
+        </span>
+        <div>
+          <div class="pk-name">${tplEsc(p.name)}</div>
+          <div class="pk-meta">${children.length} templates · ${pkTotalTasks(p)} tasks</div>
+        </div>
+      </div>
+      <p class="pk-desc">${tplEsc(p.summary)}</p>
+      <div class="pk-children">
+        ${children.map(t => `<span class="pk-chip"><i class="fa-solid ${t.fa}"></i> &nbsp;${tplEsc(t.name)}</span>`).join('')}
+      </div>
+      <div class="pk-actions">
+        <a class="pk-install" href="${pkInstallURL(p)}" target="_top" rel="noopener"><i class="fa-solid fa-download"></i> Install pack</a>
+        <button class="pk-view" type="button" data-view-pk="${p.id}"><i class="fa-solid fa-eye"></i> View contents</button>
+        <button class="pk-copy" type="button" data-pk="${p.id}"><i class="fa-solid fa-link"></i> Copy link</button>
+      </div>
+    </article>`;
+  }).join('');
+  grid.querySelectorAll('button[data-pk]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = PACKS.find(x => x.id === btn.getAttribute('data-pk'));
+      if (!p) return;
+      const link = pkInstallURL(p);
+      const done = () => tplToast('Pack link copied — open it on a device with WorkFlow');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(done, () => tplFallbackCopy(link, done));
+      } else { tplFallbackCopy(link, done); }
+    });
+  });
+  grid.querySelectorAll('button[data-view-pk]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const p = PACKS.find(x => x.id === btn.getAttribute('data-view-pk'));
+      if (p) openPackContentModal(p);
+    });
+  });
+}
+
+/* ---------- Content modal (renders the actual tasks in a template or pack) ---------- */
+const ctModal = document.getElementById('contentModal');
+const ctIconEl = document.getElementById('ctIcon');
+const ctTitleEl = document.getElementById('ctTitle');
+const ctTaglineEl = document.getElementById('ctTagline');
+const ctBodyEl = document.getElementById('ctBody');
+const ctCloseBtn = ctModal ? ctModal.querySelector('.modal-close') : null;
+let ctLastFocus = null;
+
+function ctRenderTask(task) {
+  const dayLabel = task.daysFromStart === 0
+    ? "Day 0 (start)"
+    : (task.daysFromStart > 0 ? "Day +" + task.daysFromStart : "Day " + task.daysFromStart);
+  const subList = (task.subtasks && task.subtasks.length)
+    ? '<ul class="ct-task-sub">' + task.subtasks.map(s => '<li>' + tplEsc(s) + '</li>').join('') + '</ul>'
+    : '';
+  const tagList = (task.tags && task.tags.length)
+    ? '<div class="ct-task-tags">' + task.tags.map(t => '<span class="ct-task-tag">#' + tplEsc(t) + '</span>').join('') + '</div>'
+    : '';
+  const notes = task.notes ? '<div class="ct-task-notes">' + tplEsc(task.notes) + '</div>' : '';
+  const pri = (task.priority || 'medium').toLowerCase();
+  return `
+    <div class="ct-task">
+      <div class="ct-task-head">
+        <span class="ct-task-dot ${pri}"></span>
+        <span class="ct-task-title">${tplEsc(task.title)}</span>
+        <span class="ct-task-day">${dayLabel}</span>
+      </div>
+      ${notes}
+      ${subList}
+      ${tagList}
+    </div>`;
+}
+
+function ctRenderTemplateBody(t) {
+  const meta = `
+    <div class="ct-meta-row">
+      <span class="ct-meta-pill"><i class="fa-solid fa-folder"></i> ${tplEsc(t.category)}</span>
+      <span class="ct-meta-pill"><i class="fa-solid fa-list-check"></i> ${t.tasks.length} tasks</span>
+      <span class="ct-meta-pill"><i class="fa-solid fa-calendar-day"></i> Span: ${ctSpan(t.tasks)} days</span>
+    </div>`;
+  const desc = t.detail ? '<p style="font-size:.92rem;color:#374151;line-height:1.6;margin-bottom:14px">' + tplEsc(t.detail) + '</p>' : '';
+  const tasks = t.tasks.map(ctRenderTask).join('');
+  const cta = `<a class="modal-cta" href="${tplInstallURL(t)}" target="_top" rel="noopener" data-close-modal><i class="fa-solid fa-download"></i> Install on my device</a>`;
+  return desc + meta + tasks + cta;
+}
+
+function ctRenderPackBody(p) {
+  const children = pkResolveTemplates(p);
+  const desc = p.detail ? '<p style="font-size:.92rem;color:#374151;line-height:1.6;margin-bottom:14px">' + tplEsc(p.detail) + '</p>' : '';
+  const meta = `
+    <div class="ct-meta-row">
+      <span class="ct-meta-pill"><i class="fa-solid fa-layer-group"></i> ${children.length} templates</span>
+      <span class="ct-meta-pill"><i class="fa-solid fa-list-check"></i> ${pkTotalTasks(p)} tasks total</span>
+    </div>`;
+  const projects = children.map((t, idx) => `
+    <details class="ct-pack-project" ${idx === 0 ? 'open' : ''}>
+      <summary>
+        <i class="fa-solid ${t.fa}" style="color:${t.colorHex}"></i>
+        ${tplEsc(t.name)}
+        <span class="ct-count">${t.tasks.length} tasks</span>
+      </summary>
+      <div class="ct-pack-body">${t.tasks.map(ctRenderTask).join('')}</div>
+    </details>`).join('');
+  const cta = `<a class="modal-cta" href="${pkInstallURL(p)}" target="_top" rel="noopener" data-close-modal><i class="fa-solid fa-download"></i> Install pack on my device</a>`;
+  return desc + meta + projects + cta;
+}
+
+function ctSpan(tasks) {
+  if (!tasks.length) return 0;
+  const days = tasks.map(t => t.daysFromStart);
+  return Math.max.apply(null, days) - Math.min.apply(null, days);
+}
+
+function openTemplateContentModal(t) {
+  if (!ctModal) return;
+  ctIconEl.innerHTML = '<i class="fa-solid ' + t.fa + '" style="color:' + t.colorHex + '"></i>';
+  ctTitleEl.textContent = t.name;
+  ctTaglineEl.textContent = t.summary || 'Everything that will land in your WorkFlow.';
+  ctBodyEl.innerHTML = ctRenderTemplateBody(t);
+  ctOpen();
+}
+
+function openPackContentModal(p) {
+  if (!ctModal) return;
+  ctIconEl.innerHTML = '<i class="fa-solid ' + p.fa + '" style="color:' + p.colorHex + '"></i>';
+  ctTitleEl.textContent = p.name + ' — Pack contents';
+  ctTaglineEl.textContent = p.summary || 'Every project in this pack.';
+  ctBodyEl.innerHTML = ctRenderPackBody(p);
+  ctOpen();
+}
+
+function ctOpen() {
+  ctBodyEl.scrollTop = 0;
+  ctLastFocus = document.activeElement;
+  ctModal.classList.add('open');
+  ctModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  if (ctCloseBtn) ctCloseBtn.focus();
+}
+function ctClose() {
+  ctModal.classList.remove('open');
+  ctModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  if (ctLastFocus) ctLastFocus.focus();
+}
+if (ctModal) {
+  ctCloseBtn.addEventListener('click', ctClose);
+  ctModal.addEventListener('click', (e) => {
+    if (e.target === ctModal) { ctClose(); return; }
+    if (e.target.closest('[data-close-modal]')) ctClose();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && ctModal.classList.contains('open')) ctClose();
+  });
+}
+
+function tplFallbackCopy(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (e) {}
+  document.body.removeChild(ta);
+}
+
+let tplToastTimer = null;
+function tplToast(msg) {
+  const el = document.getElementById('tplToast');
+  if (!el) return;
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(tplToastTimer);
+  tplToastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+
+tplRender();
+pkRender();
+</script>
+</body>
+</html>

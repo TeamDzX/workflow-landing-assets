@@ -294,8 +294,11 @@
 
   /* ===== Mac version + Apple-polish + generated imagery ===== */
   .store-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-  .platform-line{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 0;font-size:.9rem;font-weight:600;color:var(--gray)}
-  .platform-line i{color:var(--blue);font-size:.85rem}
+  .platform-line{margin:18px auto 0;font-size:.9rem;font-weight:600;color:var(--gray);text-align:center;line-height:1.5}
+  .platform-line .pf-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 18px}
+  .platform-line .pf{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .platform-line .pf i{color:var(--blue);font-size:.85rem}
+  .platform-line .pf-sync{display:block;margin-top:8px;font-weight:500;color:#9CA3AF}
 
   /* Mac showcase — generated product shot beside the copy */
   .mac-show{padding:88px 0;background:linear-gradient(170deg,#fff,#F5F3FF);overflow:hidden}
@@ -321,6 +324,25 @@
   .final-cta .cta-art{position:absolute;inset:0;background:url("https://cdn.jsdelivr.net/gh/TeamDzX/workflow-landing-assets@main/img/hero.jpg") center/cover no-repeat;opacity:.6;z-index:0}
   .final-cta .cta-scrim{position:absolute;inset:0;background:linear-gradient(135deg,rgba(79,70,229,.8),rgba(124,58,237,.82));z-index:1}
   .final-cta .container{position:relative;z-index:2}
+
+  /* Privacy Policy panel (integrated from the old standalone privacy.html) */
+  .legal{padding:12px 0 72px;background:#fff}
+  .legal-container{max-width:820px;text-align:left}
+  .legal .section-label,.legal .section-title,.legal .legal-meta{text-align:center}
+  .legal .section-title{margin-bottom:10px}
+  .legal-meta{color:var(--gray);font-size:.98rem;margin-bottom:14px}
+  .effective-pill{display:block;width:max-content;max-width:100%;margin:0 auto 44px;background:linear-gradient(135deg,#F5F3FF,#EEF2FF);border:1px solid rgba(79,70,229,.18);border-radius:50px;padding:8px 18px;font-size:.85rem;font-weight:600;color:var(--indigo)}
+  .legal-block{margin-bottom:30px}
+  .legal-block h3{font-size:1.15rem;font-weight:700;color:var(--dark);margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid #EEF0F4;display:flex;align-items:center;gap:11px;letter-spacing:-.01em}
+  .legal-block h3 .ln{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;border-radius:8px;background:var(--gradient);color:#fff;font-size:.78rem;font-weight:800;flex-shrink:0}
+  .legal-block p{color:#4B5563;font-size:.95rem;line-height:1.7;margin-bottom:10px}
+  .legal-block ul{list-style:none;margin:6px 0 12px}
+  .legal-block ul li{position:relative;padding:5px 0 5px 22px;color:#4B5563;font-size:.93rem;line-height:1.6}
+  .legal-block ul li::before{content:"";position:absolute;left:4px;top:14px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+  .legal-block strong{color:var(--dark);font-weight:600}
+  .legal-block a{color:var(--blue);text-decoration:none;font-weight:500}
+  .legal-block a:hover{text-decoration:underline}
+  .legal-foot{margin-top:36px;padding-top:22px;border-top:1px solid #EEF0F4;text-align:center;color:var(--gray);font-size:.85rem}
 </style>
 </head>
 <body>
@@ -353,7 +375,14 @@
       <a href="https://apps.apple.com/gb/app/workflow-manager-projects/id6777460380?mt=12" target="_top" rel="noopener" class="btn btn-primary"><i class="fa-brands fa-apple"></i> &nbsp;Download for Mac</a>
       <a href="#explore" class="btn btn-outline">Explore</a>
     </div>
-    <p class="platform-line fade-up"><i class="fa-solid fa-mobile-screen-button"></i> iPhone &nbsp;·&nbsp; <i class="fa-solid fa-tablet-screen-button"></i> iPad &nbsp;·&nbsp; <i class="fa-solid fa-desktop"></i> Mac &nbsp;— synced through your iCloud</p>
+    <p class="platform-line fade-up">
+      <span class="pf-row">
+        <span class="pf"><i class="fa-solid fa-mobile-screen-button"></i> iPhone</span>
+        <span class="pf"><i class="fa-solid fa-tablet-screen-button"></i> iPad</span>
+        <span class="pf"><i class="fa-solid fa-desktop"></i> Mac</span>
+      </span>
+      <span class="pf-sync">Synced through your iCloud</span>
+    </p>
     <div class="hero-badges fade-up">
       <div class="hero-badge"><i class="fa-solid fa-lock"></i> Privacy-first</div>
       <div class="hero-badge"><i class="fa-solid fa-cloud"></i> iCloud sync</div>
@@ -542,6 +571,7 @@
           <p>Delete the app and your data is gone. No residual cloud storage, no account to deactivate.</p>
         </div>
       </div>
+      <p style="margin-top:32px"><a href="#privacy-policy" class="btn btn-outline"><i class="fa-solid fa-file-shield"></i> &nbsp;Read the full Privacy Policy</a></p>
     </div>
   </section>
 </section>
@@ -673,6 +703,131 @@
   </section>
 </section>
 
+<!-- Rabbit-hole: Privacy Policy (integrated from privacy.html) -->
+<section class="rh-panel" id="privacy-policy" aria-hidden="true" role="region" aria-label="Privacy Policy">
+  <div class="rh-panel-bar">
+    <div class="container">
+      <button type="button" class="rh-back" data-rh-close><i class="fa-solid fa-arrow-left"></i> Back</button>
+      <span class="rh-panel-title">Privacy Policy</span>
+      <button type="button" class="rh-close" aria-label="Close" data-rh-close><i class="fa-solid fa-xmark"></i></button>
+    </div>
+  </div>
+  <section class="legal">
+    <div class="container legal-container">
+      <p class="section-label">Legal</p>
+      <h2 class="section-title">Privacy <span class="gradient-text">Policy</span></h2>
+      <p class="legal-meta">WorkFlow — Project Manager for iPhone, iPad &amp; Mac</p>
+      <span class="effective-pill"><i class="fa-solid fa-calendar-check"></i> &nbsp;Effective Date: March 30, 2026</span>
+
+      <div class="legal-block">
+        <h3><span class="ln">1</span> Introduction</h3>
+        <p>Welcome to WorkFlow ("the App"), a project management application for iPhone, iPad, and Mac developed by Opticell Limited. Your privacy matters, and this policy explains clearly and honestly how the App handles your data.</p>
+        <p>WorkFlow is designed with a privacy-first approach. The App does not operate its own servers, does not collect personal information, and does not track your activity. Your project data belongs to you and stays under your control at all times.</p>
+        <p>This Privacy Policy applies to all users of the App, including those protected under the General Data Protection Regulation (GDPR), the California Consumer Privacy Act (CCPA), and other applicable privacy laws.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">2</span> Data Collection</h3>
+        <p><strong>We do not collect, transmit, or store any personal data on our own servers.</strong> The App has no account registration system; it relies solely on your existing iCloud identity provided by Apple.</p>
+        <p>The App does not use:</p>
+        <ul>
+          <li>Third-party analytics or tracking tools</li>
+          <li>Advertising frameworks or ad networks</li>
+          <li>Fingerprinting or device-identification technologies</li>
+          <li>Any server-side data collection mechanisms</li>
+        </ul>
+        <p>The only data the App processes is what you create within it — your projects, tasks, notes, attachments, and related content — and this data never leaves your device or your personal iCloud account unless you explicitly choose to share it.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">3</span> Data Storage</h3>
+        <p>All data you create in WorkFlow is stored in two locations, both under your control:</p>
+        <ul>
+          <li><strong>On your device:</strong> The App uses Apple's SwiftData framework to store your projects and tasks locally on your iPhone, iPad, or Mac.</li>
+          <li><strong>In your iCloud account:</strong> If iCloud is enabled, the App uses Apple's CloudKit framework to sync data across your devices. This data resides in your personal iCloud account and is governed by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple's Privacy Policy</a>.</li>
+        </ul>
+        <p>The developer has no access to your iCloud data. Apple encrypts CloudKit data both in transit and at rest.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">4</span> CloudKit &amp; Sharing</h3>
+        <p>WorkFlow offers optional team collaboration through Apple's CKShare technology. When you choose to share a project:</p>
+        <ul>
+          <li>You control who is invited and can revoke access at any time.</li>
+          <li>Shared data is visible only to the participants you explicitly invite.</li>
+          <li>Sharing is facilitated entirely through Apple's CloudKit infrastructure — no data passes through the developer's servers.</li>
+          <li>Participants must have an iCloud account to access shared content.</li>
+        </ul>
+        <p>You remain the owner of any shared data and can stop sharing or remove participants whenever you choose.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">5</span> Third-Party Services</h3>
+        <p>The App relies exclusively on Apple's platform services:</p>
+        <ul>
+          <li><strong>Apple CloudKit:</strong> For data sync and sharing, governed by Apple's privacy practices.</li>
+          <li><strong>Apple Push Notification Service (APNs):</strong> For optional push notifications. You may enable or disable notifications at any time through your device's Settings. Notification tokens are managed entirely by Apple.</li>
+        </ul>
+        <p><strong>No data is sold, rented, or shared with any third party.</strong> There are no third-party SDKs, analytics providers, or advertising networks embedded in the App.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">6</span> Device Permissions</h3>
+        <p>The App may request the following system permissions, each of which is optional and user-initiated:</p>
+        <ul>
+          <li><strong>Photo Library:</strong> Requested only when you choose to attach an image to a project or task. Photos are stored as part of your project data and are not transmitted elsewhere.</li>
+          <li><strong>File Access:</strong> Requested only when you initiate a CSV import or export. The App accesses only the files you explicitly select.</li>
+          <li><strong>Notifications:</strong> Requested so the App can send you reminders and updates. Fully optional and controllable through your device's Settings.</li>
+        </ul>
+        <p>You can revoke any of these permissions at any time in your device's Settings app.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">7</span> Your Rights</h3>
+        <p>Because WorkFlow does not collect or store personal data on any external server, many traditional data-rights requests are inherently satisfied by the App's design. Nonetheless, under the GDPR, CCPA, and similar regulations, you have the right to:</p>
+        <ul>
+          <li><strong>Access:</strong> All your data is stored locally on your device and in your iCloud account. You have direct access at all times.</li>
+          <li><strong>Portability:</strong> You can export your data via the App's CSV export feature.</li>
+          <li><strong>Deletion:</strong> You can delete any or all of your data from within the App (see Section 8).</li>
+          <li><strong>Opt-out of sale:</strong> We do not sell your personal information. There is nothing to opt out of.</li>
+          <li><strong>Non-discrimination:</strong> You will not be treated differently for exercising your privacy rights.</li>
+        </ul>
+        <p>If you have questions about your rights, please contact us at the address listed in Section 11.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">8</span> Data Deletion</h3>
+        <p>You are in full control of your data at all times:</p>
+        <ul>
+          <li><strong>Delete individual items:</strong> Remove projects, tasks, or attachments directly within the App.</li>
+          <li><strong>Delete all App data:</strong> Uninstalling the App removes all locally stored data from your device.</li>
+          <li><strong>Delete iCloud data:</strong> You can remove WorkFlow's data from iCloud through your device's Settings &gt; [Your Name] &gt; iCloud &gt; Manage Storage.</li>
+        </ul>
+        <p>Since the developer does not hold any of your data on external servers, there is no additional deletion request required.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">9</span> Children's Privacy</h3>
+        <p>WorkFlow is not directed at children under the age of 13 (or the applicable age of digital consent in your jurisdiction). The App does not knowingly collect personal information from children. Because the App does not collect personal data from any user, no special risk to children's privacy exists. If you believe a child is using the App inappropriately, please contact us.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">10</span> Changes to This Policy</h3>
+        <p>We may update this Privacy Policy from time to time to reflect changes in the App's functionality or applicable laws. When changes are made, we will update the "Effective Date" at the top of this section and, where practical, notify users through the App. Continued use of the App after changes take effect constitutes acceptance of the updated policy.</p>
+      </div>
+
+      <div class="legal-block">
+        <h3><span class="ln">11</span> Contact</h3>
+        <p>If you have any questions, concerns, or requests regarding this Privacy Policy or the App's data practices, please reach out:</p>
+        <p><strong>Email:</strong> <a href="mailto:workflow@opticell-limited.com">workflow@opticell-limited.com</a></p>
+        <p>We will make every effort to respond to your inquiry promptly.</p>
+      </div>
+
+      <p class="legal-foot">&copy; 2026 Opticell Limited · WorkFlow — Project Manager. All rights reserved.</p>
+    </div>
+  </section>
+</section>
+
 <!-- Final CTA -->
 <section class="final-cta">
   <div class="cta-art" aria-hidden="true"></div>
@@ -708,7 +863,7 @@
       <div>
         <h4>Resources</h4>
         <ul>
-          <li><a href="https://www.opticell-limited.com/workflow-1">Privacy Policy</a></li>
+          <li><a href="#privacy-policy">Privacy Policy</a></li>
           <li><a href="#">Support</a></li>
           <li><a href="#">Release Notes</a></li>
         </ul>
@@ -740,7 +895,7 @@ document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 // We intercept hash changes, lock body scroll, fade in the matching .rh-panel,
 // and route Esc / the close button back to the launchpad. Hash routing means
 // browser Back/Forward works naturally and tiles are deep-linkable.
-const RH_IDS = new Set(['focus', 'share', 'templates', 'privacy', 'siri', 'pricing']);
+const RH_IDS = new Set(['focus', 'share', 'templates', 'privacy', 'siri', 'pricing', 'privacy-policy']);
 let rhLastFocus = null;
 
 function rhOpen(id) {
